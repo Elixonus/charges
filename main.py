@@ -33,7 +33,8 @@ class PointCharge(Charge):
 
     def electric_field(self, point: Cartesian) -> Polar:
         try:
-            return Polar(ELECTROSTATIC_CONSTANT * self.charge / self.position.distance(point) ** 2, self.position.angle(point))
+            return Polar(ELECTROSTATIC_CONSTANT * self.charge / self.position.distance(point) ** 2,
+                         self.position.angle(point))
         except ZeroDivisionError:
             return Polar(0, 0)
 
@@ -48,10 +49,33 @@ class PointCharge(Charge):
 
 
 class FiniteLineCharge(Charge):
-    def __init__(self, charge: int, endpoint_1: Cartesian, endpoint_2: Cartesian) -> None:
+    def __init__(self, charge: float, endpoint_1: Cartesian, endpoint_2: Cartesian) -> None:
         super().__init__(charge)
         self.endpoint_1 = endpoint_1
         self.endpoint_2 = endpoint_2
+
+    def electric_field(self, point: Cartesian) -> Cartesian:
+        endpoints: Cartesian = self.endpoint_2.copy().subtract(self.endpoint_1)
+        distance_endpoints: float = endpoints.length()
+        distance_endpoint_1: float = self.endpoint_1.distance(point)
+        distance_endpoint_2: float = self.endpoint_2.distance(point)
+        charge_density: float = self.charge / distance_endpoints
+
+        try:
+            electric_field_parallel: float = ELECTROSTATIC_CONSTANT * charge_density * (
+                    1 / distance_endpoint_1 - 1 / distance_endpoint_2)
+        except ZeroDivisionError:
+            return Cartesian(0, 0)
+
+        distance_projection_endpoint_1: float = 5
+        distance_projection: float
+
+
+class InfiniteLineCharge(Charge):
+    def __init__(self, charge: float, point_1: Cartesian, point_2: Cartesian) -> None:
+        super().__init__(charge)
+        self.point_1 = point_1
+        self.point_2 = point_2
 
 
 class Cartesian:
@@ -103,6 +127,9 @@ class Cartesian:
     def angle(self, point: Cartesian) -> float:
         return atan2(point.y - self.y, point.x - self.x)
 
+    def dot_product(self, point: Cartesian) -> float:
+        return self.x * point.x + self.y * point.y
+
     def copy(self) -> Cartesian:
         return Cartesian(self.x, self.y)
 
@@ -146,5 +173,3 @@ class Polar:
 
 charge1 = PointCharge(0.000000005, Cartesian(-5, 0))
 charge2 = PointCharge(0.000000005, Cartesian(5, 0))
-my_system = System([charge1, charge2])
-print(my_system.electric_potential(Cartesian(0, 0)))
