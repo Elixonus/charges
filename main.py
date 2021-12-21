@@ -1,262 +1,168 @@
 from __future__ import annotations
-from math import atan2, cos, exp, hypot, inf, pi, sin, sqrt, tau
-import numpy as np
-import plotly.graph_objects as go
 from sys import getsizeof
+import csv
+import numpy as np
+import PIL.Image as Image
+import electric_charges as ec
 
-ELECTROSTATIC_CONSTANT: float = 8.9875517923E+9
-ELEMENTARY_CHARGE: float = 1.602176634E-19
-
-
-class System:
-    charges: list[PointCharge]
-
-    def __init__(self, *charges: PointCharge) -> None:
-        self.charges = list(charges)
-
-    def add_charge(self, charge: PointCharge, /) -> System:
-        self.charges.append(charge)
-        return self
-
-    def add_charges(self, *charges: PointCharge) -> System:
-        self.charges.extend(charges)
-        return self
-
-    def electric_field(self, point: Cartesian, /) -> Cartesian:
-        electric_field: Cartesian = Cartesian(0, 0)
-        for charge in self.charges:
-            electric_field.add(charge.electric_field(point))
-        return electric_field
-
-    def electric_potential(self, point: Cartesian, /) -> float:
-        electric_potential: float = 0.
-        for charge in self.charges:
-            electric_potential += charge.electric_potential(point)
-        return electric_potential
-
-    def copy(self) -> System:
-        return System(*self.charges)
+VIEWPORT_MINIMUM_X: float = 0.
+VIEWPORT_MINIMUM_Y: float = 0.
+VIEWPORT_MAXIMUM_X: float = 10.
+VIEWPORT_MAXIMUM_Y: float = 10.
+VIEWPORT_LENGTH: int = 500
+VIEWPORT_AREA: int = VIEWPORT_LENGTH ** 2
+ELECTRIC_FIELD_LINE_ITERATION_LIMIT: int = 500
+ELECTRIC_FIELD_LINE_ITERATION_STEP: float = 0.1
 
 
-class PointCharge:
-    charge: float
-    position: Cartesian
+class ElectricFieldLinesSourcePoints:
+    point: int
+    points: int
+    endpoint_1: ec.Cartesian
+    endpoint_2: ec.Cartesian
 
-    def __init__(self, charge: float, position: Cartesian) -> None:
-        self.charge = charge
-        self.position = position
-
-    def electric_field(self, point: Cartesian, /) -> Cartesian:
-        electric_field: Cartesian
-        try:
-            electric_field = Polar(ELECTROSTATIC_CONSTANT * self.charge / self.position.distance(point) ** 2,
-                                   self.position.angle(point)).cartesian()
-        except ZeroDivisionError:
-            electric_field = Cartesian(0, 0)
-        return electric_field
-
-    def electric_potential(self, point: Cartesian, /) -> float:
-        electric_potential: float
-        try:
-            electric_potential = ELECTROSTATIC_CONSTANT * self.charge / self.position.distance(point)
-        except ZeroDivisionError:
-            electric_potential = self.charge * inf
-        return electric_potential
-
-    def copy(self) -> PointCharge:
-        return PointCharge(self.charge, self.position)
-
-
-class FiniteLineCharge:
-    def __init__(self, charge: float, endpoint_1: Cartesian, endpoint_2: Cartesian) -> None:
-        self.charge = charge
+    def __init__(self, points: int, endpoint_1: ec.Cartesian, endpoint_2: ec.Cartesian):
+        self.points = points
         self.endpoint_1 = endpoint_1
         self.endpoint_2 = endpoint_2
 
-    def electric_field(self, point: Cartesian) -> Cartesian:
-        distance_endpoint_1: float = self.endpoint_1.distance(point)
-        distance_endpoint_2: float = self.endpoint_2.distance(point)
+    def __iter__(self):
+        self.point = 0
 
-        try:
-            inverse_distance_endpoint_1: float = 1 / distance_endpoint_1
-            inverse_distance_endpoint_2: float = 1 / distance_endpoint_2
-        except ZeroDivisionError:
-            return Cartesian(0, 0)
+    def __next__(self):
+        point: ec.Cartesian = self.endpoint_2.copy().subtract(self.endpoint_1).multiply(self.point / (self.points - 1)).add(self.endpoint_1)
+        self.point += 1
+        return point
 
-        endpoints: Cartesian = self.endpoint_2.copy().subtract(self.endpoint_1)
-        distance_endpoints: float = endpoints.length()
-        charge_density: float = self.charge / distance_endpoints
-        electric_field_parallel: float = ELECTROSTATIC_CONSTANT * charge_density * (
-                inverse_distance_endpoint_1 - inverse_distance_endpoint_2)
-
-        displacement_projection_endpoint_1: float = endpoints.dot_product(
-            self.endpoint_1.copy().subtract(point)) / distance_endpoints
-        displacement_projection_endpoint_2: float = displacement_projection_endpoint_1 + distance_endpoints
-        distance_projection: float = sqrt(distance_endpoint_1 ** 2 - displacement_projection_endpoint_1 ** 2)
-
-        try:
-            electric_field_perpendicular: float = ELECTROSTATIC_CONSTANT * charge_density / distance_projection * (
-                    displacement_projection_endpoint_2 * inverse_distance_endpoint_2 -
-                    displacement_projection_endpoint_1 * inverse_distance_endpoint_1)
-        except ZeroDivisionError:
-            if displacement_projection_endpoint_1 > 0 or displacement_projection_endpoint_2 < 0:
-                electric_field_perpendicular = 0
-            else:
-                return Cartesian(0, 0)
+system: ec.System = ec.System(ec.PointCharge(5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(5, 5)),
+                              ec.PointCharge(-5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(7, 5)),
+                              ec.PointCharge(-5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(2, 7)),
+                              ec.PointCharge(-5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(2, 7)))
 
 
-class InfiniteLineCharge:
-    def __init__(self, charge_density: float, point_1: Cartesian, point_2: Cartesian) -> None:
-        self.charge_density = charge_density
-        self.point_1 = point_1
-        self.point_2 = point_2
+sources_electric_field_lines: list[tuple[ec.Cartesian, ec.Cartesian, int]] = [(ec.Cartesian(0, 0), ec.Cartesian(1, 1), 5)]
 
-    def electric_field(self, point: Cartesian) -> Cartesian:
-        infinite_line: Cartesian = self.point_2.copy().subtract(self.point_1)
-        cross_product: float = infinite_line.cross_product(point.copy().subtract(self.point_1))
-        distance_from_infinite_line_to_point: float = abs(cross_product) / infinite_line.length()
-        electric_field_intensity: float = 2 * ELECTROSTATIC_CONSTANT * self.charge_density / distance_from_infinite_line_to_point
-        electric_field: Cartesian = Cartesian(-infinite_line.y, infinite_line.x).multiply(
-            electric_field_intensity).divide(distance_from_infinite_line_to_point)
-        if cross_product < 0:
-            electric_field.invert()
-        return electric_field
+electric_field_line_start_position: ec.Cartesian = ec.Cartesian(0, 0)
 
+# Contains electric field line points from positive to negative direction
+electric_field_line_points: list[ec.Cartesian] = []
 
-class Cartesian:
-    x: float
-    y: float
+electric_field: ec.Cartesian
+electric_field_unit: ec.Cartesian
 
-    def __init__(self, x: float, y: float) -> None:
-        self.x = x
-        self.y = y
+# Finding and recording electric field line points from source to positive
+electric_field_line_point: ec.Cartesian = electric_field_line_start_position.copy()
+for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
+    electric_field = system.electric_field(electric_field_line_point)
+    electric_field_unit = electric_field.normalize()
+    electric_field_line_point.subtract(electric_field_unit)
+    electric_field_line_points.append(electric_field_line_point.copy())
 
-    def change(self, point: Cartesian, /) -> Cartesian:
-        self.x = point.x
-        self.y = point.y
-        return self
+# Recording electric field line point at source
+electric_field_line_points.reverse()
+electric_field_line_points.append(electric_field_line_start_position)
 
-    def replace(self, x, y) -> Cartesian:
-        self.x = x
-        self.y = y
-        return self
-
-    def add(self, point: Cartesian, /) -> Cartesian:
-        self.x += point.x
-        self.y += point.y
-        return self
-
-    def subtract(self, point: Cartesian, /) -> Cartesian:
-        self.x -= point.x
-        self.y -= point.y
-        return self
-
-    def multiply(self, multiplier: float, /) -> Cartesian:
-        self.x *= multiplier
-        self.y *= multiplier
-        return self
-
-    def divide(self, divisor: float, /) -> Cartesian:
-        self.x /= divisor
-        self.y /= divisor
-        return self
-
-    def invert(self) -> Cartesian:
-        self.x = -self.x
-        self.y = -self.y
-        return self
-
-    def length(self) -> float:
-        return hypot(self.x, self.y)
-
-    def distance(self, point: Cartesian, /) -> float:
-        return hypot(self.x - point.x, self.y - point.y)
-
-    def angle(self, point: Cartesian, /) -> float:
-        return atan2(point.y - self.y, point.x - self.x) % tau
-
-    def dot_product(self, point: Cartesian, /) -> float:
-        return self.x * point.x + self.y * point.y
-
-    def cross_product(self, point: Cartesian, /) -> float:
-        return self.x * point.y - self.y * point.x
-
-    def copy(self) -> Cartesian:
-        return Cartesian(self.x, self.y)
-
-    def polar(self) -> Polar:
-        return Polar(sqrt(self.x ** 2 + self.y ** 2), atan2(self.y, self.x) % tau)
+# Finding and recording electric field line points from source to negative
+electric_field_line_point.change(electric_field_line_start_position.copy())
+for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
+    electric_field = system.electric_field(electric_field_line_point)
+    electric_field_unit = electric_field.normalize()
+    electric_field_line_point.add(electric_field_unit)
+    electric_field_line_points.append(electric_field_line_point.copy())
 
 
-class Polar:
-    r: float
-    t: float
-
-    def __init__(self, r: float, t: float) -> None:
-        self.r = r
-        self.t = t
-
-    def change(self, point: Polar, /) -> Polar:
-        self.r = point.r
-        self.t = point.t
-        return self
-
-    def replace(self, r: float, t: float) -> Polar:
-        self.r = r
-        self.t = t
-        return self
-
-    def multiply(self, multiplier: float, /) -> Polar:
-        self.r *= multiplier
-        return self
-
-    def divide(self, divisor: float, /) -> Polar:
-        self.r /= divisor
-        return self
-
-    def invert(self) -> Polar:
-        self.t = (self.t + pi) % tau
-        return self
-
-    def copy(self) -> Polar:
-        return Polar(self.r, self.t)
-
-    def cartesian(self) -> Cartesian:
-        return Cartesian(self.r * cos(self.t), self.r * sin(self.t))
+# for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
 
 
-SIZE: int = 50
 
 
-system: System = System(PointCharge(30 * ELEMENTARY_CHARGE, Cartesian(5, 2)),
-                        PointCharge(-5 * ELEMENTARY_CHARGE, Cartesian(7, 5)),
-                        PointCharge(-5 * ELEMENTARY_CHARGE, Cartesian(2, 7)))
-min_x: float = 0.
-min_y: float = 0.
-max_x: float = 10.
-max_y: float = 10.
+
+points_x: list[float] = [VIEWPORT_MINIMUM_X + (VIEWPORT_MAXIMUM_X - VIEWPORT_MINIMUM_X) * index_x / (VIEWPORT_LENGTH - 1) for index_x in range(VIEWPORT_LENGTH)]
+points_y: list[float] = [VIEWPORT_MINIMUM_Y + (VIEWPORT_MAXIMUM_Y - VIEWPORT_MINIMUM_Y) * index_y / (VIEWPORT_LENGTH - 1) for index_y in range(VIEWPORT_LENGTH)]
+
+electric_potentials: list[list[float]] = []
+
+for point_x in points_x:
+    electric_potentials_buffer: list[float] = []
+
+    for point_y in points_y:
+        electric_potential: float = system.electric_potential(ec.Cartesian(point_x, point_y))
+        electric_potentials_buffer.append(electric_potential)
+
+    electric_potentials.append(electric_potentials_buffer)
+
+electric_potentials_flattened: list[float] = [electric_potential for electric_potentials_buffer in electric_potentials for electric_potential in electric_potentials_buffer]
+electric_potentials_sorted: list[float] = sorted(electric_potentials_flattened)
+electric_potential_low: float = electric_potentials_sorted[round(0.01 * (VIEWPORT_AREA - 1))]
+electric_potential_high: float = electric_potentials_sorted[round(0.99 * (VIEWPORT_AREA - 1))]
+
+electric_potentials_normalized: list[list[float]] = []
+
+for electric_potentials_buffer in electric_potentials:
+    electric_potentials_normalized_buffer: list[float] = []
+
+    for electric_potential in electric_potentials_buffer:
+        electric_potential_normalized: float = min(max((electric_potential - electric_potential_low) / (electric_potential_high - electric_potential_low), 0), 1)
+        electric_potentials_normalized_buffer.append(electric_potential_normalized)
+
+    electric_potentials_normalized.append(electric_potentials_normalized_buffer)
+
+electric_equipotentials: list[float] = [electric_potentials_sorted[round(0.4 * (VIEWPORT_AREA - 1))]]
+
+for electric_equipotential in electric_equipotentials:
+    electric_potentials_flag: list[list[bool]] = [[electric_potential > electric_equipotential for electric_potential in electric_potentials_buffer] for electric_potentials_buffer in electric_potentials]
+
+    electric_potentials_case: list[list[int]] = []
+
+    for electric_potentials_flag_index, electric_potentials_flag_buffer in enumerate(electric_potentials_flag[:-1]):
+        electric_potentials_case_buffer: list[int] = []
+
+        for electric_potential_flag_index, electric_potential_flag in enumerate(electric_potentials_flag_buffer[:-1]):
+            electric_potential_horizontal_flag: bool = electric_potentials_flag[electric_potentials_flag_index + 1][electric_potential_flag_index]
+            electric_potential_vertical_flag: bool = electric_potentials_flag[electric_potentials_flag_index][electric_potential_flag_index + 1]
+            electric_potential_diagonal_flag: bool = electric_potentials_flag[electric_potentials_flag_index + 1][electric_potential_flag_index + 1]
+            electric_potential_case: int = 0
+
+            if electric_potential_flag:
+                electric_potential_case += 8
+
+            if electric_potential_horizontal_flag:
+                electric_potential_case += 4
+
+            if electric_potential_diagonal_flag:
+                electric_potential_case += 2
+
+            if electric_potential_vertical_flag:
+                electric_potential_case += 1
+
+            electric_potentials_case_buffer.append(electric_potential_case)
+
+        electric_potentials_case.append(electric_potentials_case_buffer)
 
 
-electric_potentials: np.ndarray = np.empty((SIZE, SIZE))
-points_x: np.ndarray = np.linspace(min_x, max_x, SIZE)
-points_y: np.ndarray = np.linspace(min_y, max_y, SIZE)
 
-for index_x, point_x in enumerate(points_x):
-    for index_y, point_y in enumerate(points_y):
-        electric_potential: float = system.electric_potential(Cartesian(point_x, point_y))
-        electric_potentials[index_y][index_x] = electric_potential
 
-min_electric_potential, max_electric_potential = np.percentile(electric_potentials, (2.5, 97.5))
 
-fig = go.Figure(data=go.Contour(x=points_x,
-                                y=points_y,
-                                z=electric_potentials,
-                                zmin=min_electric_potential,
-                                zmax=max_electric_potential,
-                                colorscale="viridis",
-                                colorbar=dict(
-                                    title="Electric Potential (Volts)",
-                                    titleside="right"
-                                )),
-                layout=dict(template="simple_white"))
-fig.write_image("fig1.png")
+with open("color_mapping.csv") as file:
+    color_mapping: list[list[float]] = list(csv.reader(file, quoting=csv.QUOTE_NONNUMERIC))
+
+image: list[list[list[float]]] = []
+
+for electric_potentials_normalized_buffer in electric_potentials_normalized:
+    image_buffer: list[list[float]] = []
+
+    for electric_potential_normalized in electric_potentials_normalized_buffer:
+        pixel: list[float] = [round(255 * channel) for channel in color_mapping[round(255 * electric_potential_normalized)]]
+        image_buffer.append(pixel)
+
+    image.append(image_buffer)
+
+a = Image.fromarray(np.array(image).astype(np.uint8))
+a.show(a)
+
+
+'''plt.figure()
+plt.colorbar(plt.contourf(points_x, points_y, electric_potentials, levels=critical_electric_potentials, extend="both"), drawedges=True)
+plt.contour(points_x, points_y, electric_potentials, levels=critical_electric_potentials, colors="black")
+plt.show()
+'''
