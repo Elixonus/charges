@@ -1,7 +1,8 @@
 from __future__ import annotations
-from math import atan2, cos, hypot, inf, pi, sin, sqrt, tau
-from typing import Iterator
-import points as pt
+from math import inf
+from collections.abc import Iterator
+from typing import TypeAlias
+from points import Point
 
 ELECTROSTATIC_CONSTANT: float = 8.9875517923E+9
 ELEMENTARY_CHARGE: float = 1.602176634E-19
@@ -11,63 +12,57 @@ NEUTRAL_CHARGE: float = 0.
 
 
 class System:
-    charges: list[PointCharge]
+    charges: list[Charge]
 
-    def __init__(self, *charges: PointCharge) -> None:
+    def __init__(self, *charges: Charge) -> None:
         self.charges = list(charges)
 
-    def electric_field(self, point: pt.Cartesian, /) -> pt.Cartesian:
-        electric_field: pt.Cartesian = pt.Cartesian(0, 0)
+    def electric_field(self, point: Point, /) -> Point:
+        electric_field: Point = Point(0, 0)
         for charge in self.charges:
             electric_field.add(charge.electric_field(point))
         return electric_field
 
-    def electric_fields(self, point: pt.Cartesian, /) -> Iterator[pt.Cartesian]:
+    def electric_fields(self, point: Point, /) -> Iterator[Point]:
         for charge in self.charges:
-            electric_field: pt.Cartesian = charge.electric_field(point)
+            electric_field: Point = charge.electric_field(point)
             yield electric_field
 
-    def electric_potential(self, point: pt.Cartesian, /) -> float:
+    def electric_potential(self, point: Point, /) -> float:
         electric_potential: float = 0.
         for charge in self.charges:
             electric_potential += charge.electric_potential(point)
         return electric_potential
 
-    def electric_potentials(self, point: pt.Cartesian, /) -> Iterator[float]:
+    def electric_potentials(self, point: Point, /) -> Iterator[float]:
         for charge in self.charges:
             electric_potential: float = charge.electric_potential(point)
             yield electric_potential
 
-    def copy(self) -> System:
-        return System(*self.charges)
-
 
 class PointCharge:
     charge: float
-    position: pt.Cartesian
+    point: Point
 
-    def __init__(self, charge: float, position: pt.Cartesian) -> None:
+    def __init__(self, charge: float, point: Point) -> None:
         self.charge = charge
-        self.position = position
+        self.point = point
 
-    def electric_field(self, point: pt.Cartesian, /) -> pt.Cartesian:
-        electric_field: pt.Cartesian
+    def electric_field(self, point: Point, /) -> Point:
+        electric_field: Point
         try:
-            electric_field = pt.Polar(ELECTROSTATIC_CONSTANT * self.charge / self.position.distance(point) ** 2, self.position.angle(point)).cartesian()
+            electric_field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point) ** 2, self.point.direction(point))
         except ZeroDivisionError:
-            electric_field = pt.Cartesian(0, 0)
+            electric_field = Point(0, 0)
         return electric_field
 
-    def electric_potential(self, point: pt.Cartesian, /) -> float:
+    def electric_potential(self, point: Point, /) -> float:
         electric_potential: float
         try:
-            electric_potential = ELECTROSTATIC_CONSTANT * self.charge / self.position.distance(point)
+            electric_potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point)
         except ZeroDivisionError:
             electric_potential = self.charge * inf
         return electric_potential
-
-    def copy(self) -> PointCharge:
-        return PointCharge(self.charge, self.position)
 
 
 """
@@ -127,8 +122,4 @@ class InfiniteLineCharge:
         return electric_field
 """
 
-
-
-
-system = System(PointCharge(1, pt.Cartesian(1, 0)), PointCharge(-1, pt.Cartesian(0, 1)))
-print(system.electric_potentials(pt.Cartesian(0, 0)))
+Charge: TypeAlias = PointCharge

@@ -13,56 +13,48 @@ class Point:
         self.x = x
         self.y = y
 
-    def __add__(self, point: Point) -> Point:
-        """Add caller point with parameter point, without modification to the existing point."""
+    def __add__(self, point: Point, /) -> Point:
+        """(+) Add caller point with parameter point, without modification to the existing point."""
         return copy(self).__iadd__(point)
 
-    def __iadd__(self, point: Point) -> Point:
-        """Add caller point with parameter point, with modification to the existing point."""
+    def __iadd__(self, point: Point, /) -> Point:
+        """(+=) Add caller point with parameter point, with modification to the existing point."""
         return self.add(point)
 
-    def __sub__(self, point: Point) -> Point:
-        """Subtract parameter point from the caller point, without modification to the existing point."""
+    def __sub__(self, point: Point, /) -> Point:
+        """(-) Subtract parameter point from the caller point, without modification to the existing point."""
         return copy(self).__isub__(point)
 
-    def __isub__(self, point: Point) -> Point:
-        """Subtract parameter point from the caller point, with modification to the existing point."""
+    def __isub__(self, point: Point, /) -> Point:
+        """(-=) Subtract parameter point from the caller point, with modification to the existing point."""
         return self.subtract(point)
 
-    def __mul__(self, multiplier: float) -> Point:
-        """Multiply point coordinates by a number, without modification to the existing point."""
+    def __mul__(self, multiplier: float, /) -> Point:
+        """(*) Multiply point coordinates by a number, without modification to the existing point."""
         return copy(self).__imul__(multiplier)
 
-    def __rmul__(self, multiplier: float) -> Point:
-        """Multiply point coordinates by a number, without modification to the existing point."""
+    def __rmul__(self, multiplier: float, /) -> Point:
+        """(*) Multiply point coordinates by a number, without modification to the existing point."""
         return self.__mul__(multiplier)
 
-    def __imul__(self, multiplier: float) -> Point:
-        """Multiply point coordinates by a number, with modification to the existing point."""
+    def __imul__(self, multiplier: float, /) -> Point:
+        """(*=) Multiply point coordinates by a number, with modification to the existing point."""
         return self.multiply(multiplier)
 
-    def __truediv__(self, divisor: float) -> Point:
-        """Divide point coordinates by a number, without modification to the existing point."""
+    def __truediv__(self, divisor: float, /) -> Point:
+        """(/) Divide point coordinates by a number, without modification to the existing point."""
         return copy(self).__truediv__(divisor)
 
-    def __itruediv__(self, divisor: float) -> Point:
-        """Divide point coordinates by a number, with modification to the existing point."""
+    def __itruediv__(self, divisor: float, /) -> Point:
+        """(/=) Divide point coordinates by a number, with modification to the existing point."""
         return self.divide(divisor)
 
-    def __or__(self, point: Point) -> float:
-        """Find the Euclidean distance between caller and parameter points."""
-        return self.distance(point)
-
-    def __xor__(self, point: Point) -> float:
-        """Find the direction in radians from the caller point to the parameter point."""
-        return self.direction(point)
-
-    def __matmul__(self, point: Point) -> float:
-        """Find the dot product of caller and parameter points."""
+    def __matmul__(self, point: Point, /) -> float:
+        """(@) Find the dot product of caller and parameter points."""
         return self.dot_product(point)
 
-    def __mod__(self, point: Point) -> float:
-        """Find the cross product of caller and parameter points."""
+    def __mod__(self, point: Point, /) -> float:
+        """(%) Find the cross product of caller and parameter points."""
         return self.cross_product(point)
 
     def change(self, point: Point, /) -> Point:
@@ -102,7 +94,7 @@ class Point:
         return self
 
     def length(self) -> float:
-        """Get distance from the origin to the caller point."""
+        """Find the distance from caller point to the origin."""
         return hypot(self.x, self.y)
 
     def distance(self, point: Point, /) -> float:

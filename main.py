@@ -1,9 +1,13 @@
 from __future__ import annotations
 from sys import getsizeof
+from copy import copy
+from typing import NewType
 import csv
 import numpy as np
 import PIL.Image as Image
-import electric_charges as ec
+import points as pt
+import charges as cg
+import sources as src
 
 VIEWPORT_MINIMUM_X: float = 0.
 VIEWPORT_MINIMUM_Y: float = 0.
@@ -11,67 +15,43 @@ VIEWPORT_MAXIMUM_X: float = 10.
 VIEWPORT_MAXIMUM_Y: float = 10.
 VIEWPORT_LENGTH: int = 500
 VIEWPORT_AREA: int = VIEWPORT_LENGTH ** 2
-ELECTRIC_FIELD_LINE_ITERATION_LIMIT: int = 500
+ELECTRIC_FIELD_LINE_ITERATION_LIMIT: int = 3
 ELECTRIC_FIELD_LINE_ITERATION_STEP: float = 0.1
 
 
-class ElectricFieldLinesSourcePoints:
-    point: int
-    points: int
-    endpoint_1: ec.Cartesian
-    endpoint_2: ec.Cartesian
+system: cg.System = cg.System(cg.PointCharge(5 * cg.ELEMENTARY_CHARGE, pt.Point(5, 5)),
+                              cg.PointCharge(-5 * cg.ELEMENTARY_CHARGE, pt.Point(7, 5)),
+                              cg.PointCharge(-5 * cg.ELEMENTARY_CHARGE, pt.Point(2, 7)),
+                              cg.PointCharge(-5 * cg.ELEMENTARY_CHARGE, pt.Point(2, 7)))
 
-    def __init__(self, points: int, endpoint_1: ec.Cartesian, endpoint_2: ec.Cartesian):
-        self.points = points
-        self.endpoint_1 = endpoint_1
-        self.endpoint_2 = endpoint_2
+electric_field_line_source_points: list[pt.Point] = [pt.Point(5, 5)]
 
-    def __iter__(self):
-        self.point = 0
+for electric_field_line_source_point in electric_field_line_source_points:
+    # Contains electric field line points from positive to negative direction
+    electric_field_line_points: list[pt.Point] = []
+    electric_field_line_point: pt.Point
+    electric_field: pt.Point
 
-    def __next__(self):
-        point: ec.Cartesian = self.endpoint_2.copy().subtract(self.endpoint_1).multiply(self.point / (self.points - 1)).add(self.endpoint_1)
-        self.point += 1
-        return point
+    # Finding and recording electric field line points from source to positive
+    electric_field_line_point = copy(electric_field_line_source_point)
+    for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
+        electric_field = system.electric_field(electric_field_line_point)
+        electric_field_line_point.subtract(electric_field.divide(electric_field.length()))
+        electric_field_line_points.append(copy(electric_field_line_point))
 
-system: ec.System = ec.System(ec.PointCharge(5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(5, 5)),
-                              ec.PointCharge(-5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(7, 5)),
-                              ec.PointCharge(-5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(2, 7)),
-                              ec.PointCharge(-5 * ec.ELEMENTARY_CHARGE, ec.Cartesian(2, 7)))
+    # Recording electric field line point at source
+    electric_field_line_points.reverse()
+    electric_field_line_points.append(copy(electric_field_line_source_point))
 
-
-sources_electric_field_lines: list[tuple[ec.Cartesian, ec.Cartesian, int]] = [(ec.Cartesian(0, 0), ec.Cartesian(1, 1), 5)]
-
-electric_field_line_start_position: ec.Cartesian = ec.Cartesian(0, 0)
-
-# Contains electric field line points from positive to negative direction
-electric_field_line_points: list[ec.Cartesian] = []
-
-electric_field: ec.Cartesian
-electric_field_unit: ec.Cartesian
-
-# Finding and recording electric field line points from source to positive
-electric_field_line_point: ec.Cartesian = electric_field_line_start_position.copy()
-for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
-    electric_field = system.electric_field(electric_field_line_point)
-    electric_field_unit = electric_field.normalize()
-    electric_field_line_point.subtract(electric_field_unit)
-    electric_field_line_points.append(electric_field_line_point.copy())
-
-# Recording electric field line point at source
-electric_field_line_points.reverse()
-electric_field_line_points.append(electric_field_line_start_position)
-
-# Finding and recording electric field line points from source to negative
-electric_field_line_point.change(electric_field_line_start_position.copy())
-for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
-    electric_field = system.electric_field(electric_field_line_point)
-    electric_field_unit = electric_field.normalize()
-    electric_field_line_point.add(electric_field_unit)
-    electric_field_line_points.append(electric_field_line_point.copy())
+    # Finding and recording electric field line points from source to negative
+    electric_field_line_point = copy(electric_field_line_source_point)
+    for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
+        electric_field = system.electric_field(electric_field_line_point)
+        electric_field_line_point.add(electric_field.divide(electric_field.length()))
+        electric_field_line_points.append(copy(electric_field_line_point))
 
 
-# for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
+
 
 
 
@@ -86,7 +66,7 @@ for point_x in points_x:
     electric_potentials_buffer: list[float] = []
 
     for point_y in points_y:
-        electric_potential: float = system.electric_potential(ec.Cartesian(point_x, point_y))
+        electric_potential: float = system.electric_potential(pt.Point(point_x, point_y))
         electric_potentials_buffer.append(electric_potential)
 
     electric_potentials.append(electric_potentials_buffer)
@@ -157,8 +137,8 @@ for electric_potentials_normalized_buffer in electric_potentials_normalized:
 
     image.append(image_buffer)
 
-a = Image.fromarray(np.array(image).astype(np.uint8))
-a.show(a)
+#a = Image.fromarray(np.array(image).astype(np.uint8))
+#a.show(a)
 
 
 '''plt.figure()
