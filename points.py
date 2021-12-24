@@ -1,107 +1,127 @@
 from __future__ import annotations
-from math import atan2, cos, hypot, pi, sin, sqrt, tau
+from math import atan2, cos, hypot, sin
+from copy import copy
 
 
-class Cartesian:
+class Point:
+    """Two-dimensional point represented in cartesian coordinates."""
     x: float
     y: float
 
     def __init__(self, x: float, y: float) -> None:
+        """Create a point from x and y."""
         self.x = x
         self.y = y
 
-    def change(self, point: Cartesian, /) -> Cartesian:
+    def __add__(self, point: Point) -> Point:
+        """Add caller point with parameter point, without modification to the existing point."""
+        return copy(self).__iadd__(point)
+
+    def __iadd__(self, point: Point) -> Point:
+        """Add caller point with parameter point, with modification to the existing point."""
+        return self.add(point)
+
+    def __sub__(self, point: Point) -> Point:
+        """Subtract parameter point from the caller point, without modification to the existing point."""
+        return copy(self).__isub__(point)
+
+    def __isub__(self, point: Point) -> Point:
+        """Subtract parameter point from the caller point, with modification to the existing point."""
+        return self.subtract(point)
+
+    def __mul__(self, multiplier: float) -> Point:
+        """Multiply point coordinates by a number, without modification to the existing point."""
+        return copy(self).__imul__(multiplier)
+
+    def __rmul__(self, multiplier: float) -> Point:
+        """Multiply point coordinates by a number, without modification to the existing point."""
+        return self.__mul__(multiplier)
+
+    def __imul__(self, multiplier: float) -> Point:
+        """Multiply point coordinates by a number, with modification to the existing point."""
+        return self.multiply(multiplier)
+
+    def __truediv__(self, divisor: float) -> Point:
+        """Divide point coordinates by a number, without modification to the existing point."""
+        return copy(self).__truediv__(divisor)
+
+    def __itruediv__(self, divisor: float) -> Point:
+        """Divide point coordinates by a number, with modification to the existing point."""
+        return self.divide(divisor)
+
+    def __or__(self, point: Point) -> float:
+        """Find the Euclidean distance between caller and parameter points."""
+        return self.distance(point)
+
+    def __xor__(self, point: Point) -> float:
+        """Find the direction in radians from the caller point to the parameter point."""
+        return self.direction(point)
+
+    def __matmul__(self, point: Point) -> float:
+        """Find the dot product of caller and parameter points."""
+        return self.dot_product(point)
+
+    def __mod__(self, point: Point) -> float:
+        """Find the cross product of caller and parameter points."""
+        return self.cross_product(point)
+
+    def change(self, point: Point, /) -> Point:
+        """Change coordinates of caller point to match parameter point."""
         self.x = point.x
         self.y = point.y
         return self
 
-    def replace(self, x, y) -> Cartesian:
+    def replace(self, x, y) -> Point:
+        """Replace individual coordinates of caller point with a set of x and y values."""
         self.x = x
         self.y = y
         return self
 
-    def add(self, point: Cartesian, /) -> Cartesian:
+    def add(self, point: Point, /) -> Point:
+        """Add caller point with parameter point with, modification to the existing point."""
         self.x += point.x
         self.y += point.y
         return self
 
-    def subtract(self, point: Cartesian, /) -> Cartesian:
+    def subtract(self, point: Point, /) -> Point:
+        """Subtract parameter point from the caller point, with modification to the existing point."""
         self.x -= point.x
         self.y -= point.y
         return self
 
-    def multiply(self, multiplier: float, /) -> Cartesian:
+    def multiply(self, multiplier: float, /) -> Point:
+        """Multiply point coordinates by a number, with modification to the existing point."""
         self.x *= multiplier
         self.y *= multiplier
         return self
 
-    def divide(self, divisor: float, /) -> Cartesian:
+    def divide(self, divisor: float, /) -> Point:
+        """Divide point coordinates by a number, with modification to the existing point."""
         self.x /= divisor
         self.y /= divisor
         return self
 
-    def normalize(self) -> Cartesian:
-        return self.divide(self.length())
-
-    def invert(self) -> Cartesian:
-        self.x = -self.x
-        self.y = -self.y
-        return self
-
     def length(self) -> float:
+        """Get distance from the origin to the caller point."""
         return hypot(self.x, self.y)
 
-    def distance(self, point: Cartesian, /) -> float:
+    def distance(self, point: Point, /) -> float:
+        """Find the Euclidean distance between caller and parameter points."""
         return hypot(self.x - point.x, self.y - point.y)
 
-    def angle(self, point: Cartesian, /) -> float:
-        return atan2(point.y - self.y, point.x - self.x) % tau
+    def direction(self, point: Point, /) -> float:
+        """Find the direction in radians from the caller point to the parameter point."""
+        return atan2(self.y - point.y, self.x - point.x)
 
-    def dot_product(self, point: Cartesian, /) -> float:
+    def dot_product(self, point: Point, /) -> float:
+        """Find the dot product of caller and parameter points."""
         return self.x * point.x + self.y * point.y
 
-    def cross_product(self, point: Cartesian, /) -> float:
+    def cross_product(self, point: Point, /) -> float:
+        """Find the cross product of caller and parameter points."""
         return self.x * point.y - self.y * point.x
 
-    def copy(self) -> Cartesian:
-        return Cartesian(self.x, self.y)
-
-    def polar(self) -> Polar:
-        return Polar(sqrt(self.x ** 2 + self.y ** 2), atan2(self.y, self.x) % tau)
-
-
-class Polar:
-    r: float
-    t: float
-
-    def __init__(self, r: float, t: float) -> None:
-        self.r = r
-        self.t = t
-
-    def change(self, point: Polar, /) -> Polar:
-        self.r = point.r
-        self.t = point.t
-        return self
-
-    def replace(self, r: float, t: float) -> Polar:
-        self.r = r
-        self.t = t
-        return self
-
-    def multiply(self, multiplier: float, /) -> Polar:
-        self.r *= multiplier
-        return self
-
-    def divide(self, divisor: float, /) -> Polar:
-        self.r /= divisor
-        return self
-
-    def invert(self) -> Polar:
-        self.t = (self.t + pi) % tau
-        return self
-
-    def copy(self) -> Polar:
-        return Polar(self.r, self.t)
-
-    def cartesian(self) -> Cartesian:
-        return Cartesian(self.r * cos(self.t), self.r * sin(self.t))
+    @classmethod
+    def polar(cls, radius: float, theta: float) -> Point:
+        """Create and return a cartesian point instance from polar coordinates."""
+        return cls(radius * cos(theta), radius * sin(theta))
