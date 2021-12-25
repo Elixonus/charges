@@ -9,7 +9,7 @@ class Point:
     y: float
 
     def __init__(self, x: float, y: float) -> None:
-        """Create a point from x and y."""
+        """Create a point from cartesian coordinates."""
         self.x = x
         self.y = y
 
@@ -114,6 +114,11 @@ class Point:
         return self.x * point.y - self.y * point.x
 
     @classmethod
+    def origin(cls) -> Point:
+        """Create a cartesian point placed on the origin."""
+        return cls(0., 0.)
+
+    @classmethod
     def polar(cls, radius: float, theta: float) -> Point:
-        """Create and return a cartesian point instance from polar coordinates."""
+        """Create a cartesian point from polar coordinates."""
         return cls(radius * cos(theta), radius * sin(theta))
