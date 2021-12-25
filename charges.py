@@ -51,9 +51,10 @@ class PointCharge:
     def electric_field(self, point: Point, /) -> Point:
         electric_field: Point
         try:
-            electric_field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point) ** 2, self.point.direction(point))
+            electric_field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point) ** 2,
+                                         self.point.direction(point))
         except ZeroDivisionError:
-            electric_field = Point(0, 0)
+            electric_field = Point.origin()
         return electric_field
 
     def electric_potential(self, point: Point, /) -> float:
@@ -61,7 +62,7 @@ class PointCharge:
         try:
             electric_potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point)
         except ZeroDivisionError:
-            electric_potential = self.charge * inf
+            electric_potential = 0.
         return electric_potential
 
 
