@@ -1,6 +1,8 @@
 from __future__ import annotations
 from math import atan2, cos, hypot, sin
 from copy import copy
+from collections.abc import Callable
+from typing import Any
 
 
 class Point:
@@ -49,6 +51,11 @@ class Point:
         """(/=) Divide point coordinates by a number, with modification to the existing point."""
         return self.divide(divisor)
 
+    def __rtruediv__(self, dividend: float, /) -> Point:
+        self.x = dividend / self.x
+        self.y = dividend / self.y
+        return self
+
     def __matmul__(self, point: Point, /) -> float:
         """(@) Find the dot product of caller and parameter points."""
         return self.dot_product(point)
@@ -91,6 +98,17 @@ class Point:
         """Divide point coordinates by a number, with modification to the existing point."""
         self.x /= divisor
         self.y /= divisor
+        return self
+
+    def interpolate(self, target: Point, interpolation: float) -> Point:
+        self.x = self.x + (target.x - self.x) * interpolation
+        self.y = self.y + (target.y - self.y) * interpolation
+        return self
+
+    def operate(self, function: Callable[[float], float]) -> Point:
+        """Execute a function on both coordinates of point with no additional arguments."""
+        self.x = function(self.x)
+        self.y = function(self.y)
         return self
 
     def length(self) -> float:
