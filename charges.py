@@ -1,5 +1,4 @@
 from __future__ import annotations
-from math import inf
 from collections.abc import Iterator
 from typing import TypeAlias
 from points import Point

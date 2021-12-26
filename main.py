@@ -3,8 +3,6 @@ from sys import getsizeof
 from copy import copy
 from typing import NewType
 import csv
-import numpy as np
-import PIL.Image as Image
 import points as pt
 import charges as cg
 import sources as src
@@ -24,9 +22,10 @@ system: cg.System = cg.System(cg.PointCharge(5 * cg.ELEMENTARY_CHARGE, pt.Point(
                               cg.PointCharge(-5 * cg.ELEMENTARY_CHARGE, pt.Point(2, 7)),
                               cg.PointCharge(-5 * cg.ELEMENTARY_CHARGE, pt.Point(2, 7)))
 
-electric_field_line_source_points: list[pt.Point] = [pt.Point(5, 5)]
+electric_field_lines_source_points: list[pt.Point] = [pt.Point(5, 5)]
+electric_field_lines_points: list[list[pt.Point]] = []
 
-for electric_field_line_source_point in electric_field_line_source_points:
+for electric_field_line_source_point in electric_field_lines_source_points:
     # Contains electric field line points from positive to negative direction
     electric_field_line_points: list[pt.Point] = []
     electric_field_line_point: pt.Point
@@ -50,7 +49,7 @@ for electric_field_line_source_point in electric_field_line_source_points:
         electric_field_line_point.add(electric_field.divide(electric_field.length()))
         electric_field_line_points.append(copy(electric_field_line_point))
 
-
+    electric_field_lines_points.append(electric_field_line_points)
 
 
 
