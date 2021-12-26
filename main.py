@@ -51,8 +51,19 @@ for electric_field_line_source_point in electric_field_lines_source_points:
 
     electric_field_lines_points.append(electric_field_line_points)
 
+electric_field_lines_points_mapped: list[list[pt.Point]] = []
 
+for electric_field_line_points in electric_field_lines_points:
+    electric_field_line_points_mapped: list[pt.Point] = []
 
+    for electric_field_line_point in electric_field_line_points:
+        electric_field_line_point_mapped: pt.Point = pt.Point(
+            VIEWPORT_LENGTH * (electric_field_line_point.x - VIEWPORT_MINIMUM_X) / (VIEWPORT_MAXIMUM_X - VIEWPORT_MINIMUM_X),
+            VIEWPORT_LENGTH * (electric_field_line_point.y - VIEWPORT_MINIMUM_Y) / (VIEWPORT_MAXIMUM_Y - VIEWPORT_MINIMUM_Y)
+        )
+        electric_field_line_points_mapped.append(electric_field_line_point_mapped)
+
+    electric_field_lines_points_mapped.append(electric_field_line_points_mapped)
 
 
 
@@ -138,10 +149,3 @@ for electric_potentials_normalized_buffer in electric_potentials_normalized:
 
 #a = Image.fromarray(np.array(image).astype(np.uint8))
 #a.show(a)
-
-
-'''plt.figure()
-plt.colorbar(plt.contourf(points_x, points_y, electric_potentials, levels=critical_electric_potentials, extend="both"), drawedges=True)
-plt.contour(points_x, points_y, electric_potentials, levels=critical_electric_potentials, colors="black")
-plt.show()
-'''
