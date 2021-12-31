@@ -1,7 +1,7 @@
 from __future__ import annotations
 from math import atan2, cos, hypot, sin
 from copy import copy
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from typing import Any
 
 
@@ -14,6 +14,11 @@ class Point:
         """Create a point from cartesian coordinates."""
         self.x = x
         self.y = y
+
+    def __iter__(self) -> Iterator[float]:
+        """Iterate through the x and y."""
+        yield self.x
+        yield self.y
 
     def __add__(self, point: Point, /) -> Point:
         """(+) Add caller point with parameter point, without modification to the existing point."""
