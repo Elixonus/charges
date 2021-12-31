@@ -14,29 +14,34 @@ class System:
     charges: list[Charge]
 
     def __init__(self, *charges: Charge) -> None:
+        """Create a system with the given charges."""
         self.charges = list(charges)
 
-    def electric_field(self, point: Point, /) -> Point:
-        electric_field: Point = Point(0, 0)
+    def field(self, point: Point, /) -> Point:
+        """Calculate the electric field at the specified point in the system."""
+        field: Point = Point(0, 0)
         for charge in self.charges:
-            electric_field.add(charge.electric_field(point))
-        return electric_field
+            field.add(charge.field(point))
+        return field
 
-    def electric_fields(self, point: Point, /) -> Iterator[Point]:
+    def fields(self, point: Point, /) -> Iterator[Point]:
+        """Calculate the independent electric fields caused by each charge at the specified point in the system."""
         for charge in self.charges:
-            electric_field: Point = charge.electric_field(point)
-            yield electric_field
+            field: Point = charge.field(point)
+            yield field
 
-    def electric_potential(self, point: Point, /) -> float:
-        electric_potential: float = 0.
+    def potential(self, point: Point, /) -> float:
+        """Calculate the electric potential at the specified point in the system."""
+        potential: float = 0.
         for charge in self.charges:
-            electric_potential += charge.electric_potential(point)
-        return electric_potential
+            potential += charge.potential(point)
+        return potential
 
-    def electric_potentials(self, point: Point, /) -> Iterator[float]:
+    def potentials(self, point: Point, /) -> Iterator[float]:
+        """Calculate the independent electric potentials caused by each charge at the specified point in the system."""
         for charge in self.charges:
-            electric_potential: float = charge.electric_potential(point)
-            yield electric_potential
+            potential: float = charge.potential(point)
+            yield potential
 
 
 class PointCharge:
@@ -44,25 +49,28 @@ class PointCharge:
     point: Point
 
     def __init__(self, charge: float, point: Point) -> None:
+        """Create a point charge."""
         self.charge = charge
         self.point = point
 
-    def electric_field(self, point: Point, /) -> Point:
-        electric_field: Point
+    def field(self, point: Point, /) -> Point:
+        """Calculate the electric field at the specified point."""
+        field: Point
         try:
-            electric_field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point) ** 2,
-                                         self.point.direction(point))
+            field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point) ** 2,
+                                self.point.direction(point))
         except ZeroDivisionError:
-            electric_field = Point.origin()
-        return electric_field
+            field = Point.origin()
+        return field
 
-    def electric_potential(self, point: Point, /) -> float:
-        electric_potential: float
+    def potential(self, point: Point, /) -> float:
+        """Calculate the electric potential at the specified point."""
+        potential: float
         try:
-            electric_potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point)
+            potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point)
         except ZeroDivisionError:
-            electric_potential = 0.
-        return electric_potential
+            potential = 0.
+        return potential
 
 
 """
