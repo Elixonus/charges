@@ -14,7 +14,7 @@ VIEWPORT_MAXIMUM_X: float = 10.
 VIEWPORT_MAXIMUM_Y: float = 10.
 VIEWPORT_RANGE_X: float = VIEWPORT_MAXIMUM_X - VIEWPORT_MINIMUM_X
 VIEWPORT_RANGE_Y: float = VIEWPORT_MAXIMUM_Y - VIEWPORT_MINIMUM_Y
-IMAGE_LENGTH: int = 30
+IMAGE_LENGTH: int = 100
 IMAGE_AREA: int = IMAGE_LENGTH ** 2
 
 electric_system: System = System(PointCharge(-5 * ELEMENTARY_CHARGE, Point(5, 5)),
@@ -56,17 +56,15 @@ for electric_field_line_source_point in electric_field_lines_source_points:
 
     electric_field_lines_points.append(electric_field_line_points)
 
-electric_potentials: list[list[float]] = []
+electric_fields: list[list[Point]] = [[electric_system.field(Point(
+    VIEWPORT_MINIMUM_X + VIEWPORT_RANGE_X * (image_x / (IMAGE_LENGTH - 1)),
+    VIEWPORT_MINIMUM_Y + VIEWPORT_RANGE_Y * (image_y / (IMAGE_LENGTH - 1))
+)) for image_y in range(IMAGE_LENGTH)] for image_x in range(IMAGE_LENGTH)]
 
-for image_x in range(IMAGE_LENGTH):
-    electric_potentials_buffer: list[float] = []
-    for image_y in range(IMAGE_LENGTH):
-        electric_potential: float = electric_system.potential(Point(
-            VIEWPORT_MINIMUM_X + VIEWPORT_RANGE_X * (image_x / (IMAGE_LENGTH - 1)),
-            VIEWPORT_MINIMUM_Y + VIEWPORT_RANGE_Y * (image_y / (IMAGE_LENGTH - 1))
-        ))
-        electric_potentials_buffer.append(electric_potential)
-    electric_potentials.append(electric_potentials_buffer)
+electric_potentials: list[list[float]] = [[electric_system.potential(Point(
+    VIEWPORT_MINIMUM_X + VIEWPORT_RANGE_X * (image_x / (IMAGE_LENGTH - 1)),
+    VIEWPORT_MINIMUM_Y + VIEWPORT_RANGE_Y * (image_y / (IMAGE_LENGTH - 1))
+)) for image_y in range(IMAGE_LENGTH)] for image_x in range(IMAGE_LENGTH)]
 
 electric_potentials_sorted: list[float] = sorted(electric_potential
                                                  for electric_potentials_buffer in electric_potentials
@@ -74,16 +72,14 @@ electric_potentials_sorted: list[float] = sorted(electric_potential
 electric_potential_low: float = electric_potentials_sorted[round(0.01 * (IMAGE_AREA - 1))]
 electric_potential_high: float = electric_potentials_sorted[round(0.99 * (IMAGE_AREA - 1))]
 electric_equipotentials: list[float] = [
-    electric_potentials_sorted[round(0.05 * (IMAGE_AREA - 1))],
-    electric_potentials_sorted[round(0.25 * (IMAGE_AREA - 1))],
-    electric_potentials_sorted[round(0.5 * (IMAGE_AREA - 1))],
-    electric_potentials_sorted[round(0.75 * (IMAGE_AREA - 1))],
-    electric_potentials_sorted[round(0.95 * (IMAGE_AREA - 1))]
+    electric_potentials_sorted[round(percentile * (IMAGE_AREA - 1))] for percentile in
+    (0.05, 0.25, 0.5, 0.75, 0.95)
 ]
 
 
 def viewport(point: Point, /) -> tuple[float, float]:
-    return (point.x - VIEWPORT_MINIMUM_X) / VIEWPORT_RANGE_X, (point.y - VIEWPORT_MINIMUM_Y) / VIEWPORT_RANGE_Y
+    return (point.x - VIEWPORT_MINIMUM_X) / VIEWPORT_RANGE_X,\
+           (point.y - VIEWPORT_MINIMUM_Y) / VIEWPORT_RANGE_Y
 
 
 points_x: list[float] = [VIEWPORT_MINIMUM_X + VIEWPORT_RANGE_X * index_x / (IMAGE_LENGTH - 1) for index_x in
