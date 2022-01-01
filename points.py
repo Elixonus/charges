@@ -2,7 +2,6 @@ from __future__ import annotations
 from math import atan2, cos, hypot, sin
 from copy import copy
 from collections.abc import Callable, Iterator
-from typing import Any
 
 
 class Point:
