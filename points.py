@@ -109,12 +109,6 @@ class Point:
         self.y = self.y + (target.y - self.y) * interpolation
         return self
 
-    def operate(self, function: Callable[[float], float]) -> Point:
-        """Execute a function on both coordinates of point with no additional arguments."""
-        self.x = function(self.x)
-        self.y = function(self.y)
-        return self
-
     def length(self) -> float:
         """Find the distance from caller point to the origin."""
         return hypot(self.x, self.y)
