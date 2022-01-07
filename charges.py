@@ -1,13 +1,10 @@
 from __future__ import annotations
 from collections.abc import Iterator
-from typing import TypeAlias
+from typing import TypeAlias, Type
 from points import Point
 
 ELECTROSTATIC_CONSTANT: float = 8.9875517923E+9
 ELEMENTARY_CHARGE: float = 1.602176634E-19
-PROTON_CHARGE: float = ELEMENTARY_CHARGE
-ELECTRON_CHARGE: float = -ELEMENTARY_CHARGE
-NEUTRAL_CHARGE: float = 0.
 
 
 class System:
@@ -73,6 +70,24 @@ class PointCharge:
         return potential
 
 
+class Proton(PointCharge):
+    def __init__(self, point: Point) -> None:
+        super().__init__(ELEMENTARY_CHARGE, point)
+
+
+class Electron(PointCharge):
+    def __init__(self, point: Point) -> None:
+        super().__init__(-ELEMENTARY_CHARGE, point)
+
+
+class Neutron(PointCharge):
+    def __init__(self, point: Point) -> None:
+        super().__init__(0, point)
+
+
+Charge: TypeAlias = PointCharge
+
+
 """
 class FiniteLineCharge:
     def __init__(self, charge: float, endpoint_1: Cartesian, endpoint_2: Cartesian) -> None:
@@ -129,5 +144,3 @@ class InfiniteLineCharge:
             electric_field.invert()
         return electric_field
 """
-
-Charge: TypeAlias = PointCharge
