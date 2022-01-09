@@ -12,6 +12,7 @@ class System:
 
     def __init__(self, *charges: Charge) -> None:
         """Create a system with the given charges."""
+        print(type(charges))
         self.charges = list(charges)
 
     def field(self, point: Point, /) -> Point:
@@ -50,6 +51,18 @@ class PointCharge:
         self.charge = charge
         self.point = point
 
+    @classmethod
+    def proton(cls, point: Point) -> PointCharge:
+        return cls(ELEMENTARY_CHARGE, point)
+
+    @classmethod
+    def electron(cls, point: Point) -> PointCharge:
+        return cls(-ELEMENTARY_CHARGE, point)
+
+    @classmethod
+    def neutron(cls, point: Point) -> PointCharge:
+        return cls(0, point)
+
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point."""
         field: Point
@@ -70,24 +83,11 @@ class PointCharge:
         return potential
 
 
-class Proton(PointCharge):
-    def __init__(self, point: Point) -> None:
-        super().__init__(ELEMENTARY_CHARGE, point)
-
-
-class Electron(PointCharge):
-    def __init__(self, point: Point) -> None:
-        super().__init__(-ELEMENTARY_CHARGE, point)
-
-
-class Neutron(PointCharge):
-    def __init__(self, point: Point) -> None:
-        super().__init__(0, point)
 
 
 Charge: TypeAlias = PointCharge
 
-
+sys = System()
 """
 class FiniteLineCharge:
     def __init__(self, charge: float, endpoint_1: Cartesian, endpoint_2: Cartesian) -> None:
