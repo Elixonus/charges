@@ -1,19 +1,20 @@
 from __future__ import annotations
 from collections.abc import Iterator
-from typing import TypeAlias, Type
 from points import Point
 
 ELECTROSTATIC_CONSTANT: float = 8.9875517923E+9
 ELEMENTARY_CHARGE: float = 1.602176634E-19
+PROTON_CHARGE: float = ELEMENTARY_CHARGE
+ELECTRON_CHARGE: float = -ELEMENTARY_CHARGE
+NEUTRON_CHARGE: float = 0.
 
 
 class System:
     charges: list[Charge]
 
-    def __init__(self, *charges: Charge) -> None:
+    def __init__(self, charges: list[Charge]) -> None:
         """Create a system with the given charges."""
-        print(type(charges))
-        self.charges = list(charges)
+        self.charges = charges
 
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point in the system."""
@@ -42,33 +43,33 @@ class System:
             yield potential
 
 
-class PointCharge:
+class Charge:
     charge: float
+
+    def __init__(self, charge: float) -> None:
+        self.charge = charge
+
+    def field(self, point: Point, /) -> Point:
+        raise NotImplemented
+
+    def potential(self, point: Point, /) -> float:
+        raise NotImplemented
+
+
+class PointCharge(Charge):
     point: Point
 
     def __init__(self, charge: float, point: Point) -> None:
         """Create a point charge."""
-        self.charge = charge
+        super().__init__(charge)
         self.point = point
-
-    @classmethod
-    def proton(cls, point: Point) -> PointCharge:
-        return cls(ELEMENTARY_CHARGE, point)
-
-    @classmethod
-    def electron(cls, point: Point) -> PointCharge:
-        return cls(-ELEMENTARY_CHARGE, point)
-
-    @classmethod
-    def neutron(cls, point: Point) -> PointCharge:
-        return cls(0, point)
 
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point."""
         field: Point
         try:
-            field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point) ** 2,
-                                self.point.direction(point))
+            field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 2,
+                                self.point.angle(point))
         except ZeroDivisionError:
             field = Point.origin()
         return field
@@ -77,17 +78,12 @@ class PointCharge:
         """Calculate the electric potential at the specified point."""
         potential: float
         try:
-            potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.distance(point)
+            potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point)
         except ZeroDivisionError:
             potential = 0.
         return potential
 
 
-
-
-Charge: TypeAlias = PointCharge
-
-sys = System()
 """
 class FiniteLineCharge:
     def __init__(self, charge: float, endpoint_1: Cartesian, endpoint_2: Cartesian) -> None:
