@@ -10,6 +10,7 @@ NEUTRON_CHARGE: float = 0.
 
 
 class System:
+    """An electrical system of static charges."""
     charges: list[Charge]
 
     def __init__(self, charges: list[Charge]) -> None:
@@ -44,16 +45,20 @@ class System:
 
 
 class Charge:
+    """A generic charge object which all charges should inherit from."""
     charge: float
 
     def __init__(self, charge: float) -> None:
+        """Create a generic charge, not meant to be called directly."""
         self.charge = charge
 
     def field(self, point: Point, /) -> Point:
-        raise NotImplemented
+        """Electric field method that all charges inheriting this class should implement."""
+        raise NotImplementedError
 
     def potential(self, point: Point, /) -> float:
-        raise NotImplemented
+        """Electric potential method that all charges inheriting this class should implement."""
+        raise NotImplementedError
 
 
 class PointCharge(Charge):
