@@ -19,20 +19,20 @@ class System:
 
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point in the system."""
-        field: Point = Point(0, 0)
+        field = Point(0, 0)
         for charge in self.charges:
-            field.add(charge.field(point))
+            field += charge.field(point)
         return field
 
     def fields(self, point: Point, /) -> Iterator[Point]:
         """Calculate the independent electric fields caused by each charge at the specified point in the system."""
         for charge in self.charges:
-            field: Point = charge.field(point)
+            field = charge.field(point)
             yield field
 
     def potential(self, point: Point, /) -> float:
         """Calculate the electric potential at the specified point in the system."""
-        potential: float = 0.
+        potential = 0
         for charge in self.charges:
             potential += charge.potential(point)
         return potential
@@ -40,7 +40,7 @@ class System:
     def potentials(self, point: Point, /) -> Iterator[float]:
         """Calculate the independent electric potentials caused by each charge at the specified point in the system."""
         for charge in self.charges:
-            potential: float = charge.potential(point)
+            potential = charge.potential(point)
             yield potential
 
 
@@ -71,7 +71,6 @@ class PointCharge(Charge):
 
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point."""
-        field: Point
         try:
             field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 2,
                                 self.point.angle(point))
@@ -81,11 +80,10 @@ class PointCharge(Charge):
 
     def potential(self, point: Point, /) -> float:
         """Calculate the electric potential at the specified point."""
-        potential: float
         try:
             potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point)
         except ZeroDivisionError:
-            potential = 0.
+            potential = 0
         return potential
 
 
