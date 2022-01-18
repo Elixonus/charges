@@ -16,8 +16,8 @@ class System:
             force_2 = -force_1
             acceleration_1 = force_1 / particle_1.mass
             acceleration_2 = force_2 / particle_2.mass
-            particle_1.velocity.add(step * acceleration_1)
-            particle_2.velocity.add(step * acceleration_2)
+            particle_1.velocity += step * acceleration_1
+            particle_2.velocity += step * acceleration_2
 
 
 class Particle(PointCharge):
@@ -28,6 +28,12 @@ class Particle(PointCharge):
         super().__init__(charge, point)
         self.mass = mass
         self.velocity = velocity
+
+    def momentum(self) -> Point:
+        return self.mass * self.velocity
+
+    def kinetic(self) -> float:
+        return 1/2 * (self.mass * self.velocity.len() ** 2)
 
     def force(self, particle: Particle) -> Point:
         force = self.field(particle.point).mul(particle.charge)

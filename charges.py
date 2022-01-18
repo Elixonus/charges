@@ -53,7 +53,7 @@ class System:
 
 
 class Charge:
-    """Generic charge object which all charge classes should inherit from."""
+    """Generic charge object which all charge classes inherit from."""
     charge: float
 
     def __init__(self, charge: float) -> None:
