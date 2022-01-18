@@ -1,8 +1,6 @@
 from __future__ import annotations
-from math import atan2, cos, hypot, sin
-from collections.abc import Iterable, Iterator
-from itertools import pairwise
-from typing import Type, TypeAlias
+from math import cos, hypot, sin
+from collections.abc import Iterator
 
 
 class Point:
@@ -79,7 +77,7 @@ class Point:
         return self
 
     def add(self, point: Point, /) -> Point:
-        """(+) Add caller point with parameter point, with modification to caller point."""
+        """Add caller point with parameter point, with modification to caller point."""
         self.x += point.x
         self.y += point.y
         return self
@@ -110,100 +108,19 @@ class Point:
         """Find the distance between two points."""
         return hypot(self.x - point.x, self.y - point.y)
 
-    def angle(self, point: Point, /) -> float:
-        """Find the angle in radians from the caller point to the parameter point."""
-        return atan2(point.y - self.y, point.x - self.x)
-
     def dot(self, point: Point, /) -> float:
-        """Find the dot product of two points as vectors."""
+        """Find the dot product of two points."""
         return self.x * point.x + self.y * point.y
 
     def cross(self, point: Point, /) -> float:
-        """Find the cross product of two points as vectors."""
+        """Find the cross product of two points."""
         return self.x * point.y - self.y * point.x
 
     def copy(self) -> Point:
-        """Get a copied point instance."""
+        """Copy the point instance."""
         return Point(self.x, self.y)
 
     @classmethod
-    def origin(cls) -> Point:
-        """Instantiate a point from the origin."""
-        return cls(0., 0.)
-
-    @classmethod
     def polar(cls, radius: float, theta: float) -> Point:
-        """Instantiate a cartesian point from polar coordinates."""
+        """Create a point from polar coordinates."""
         return cls(radius * cos(theta), radius * sin(theta))
-
-
-class Line:
-    point_1: Point
-    point_2: Point
-
-    def __init__(self, point_1: Point, point_2: Point) -> None:
-        self.point_1 = point_1
-        self.point_2 = point_2
-
-    def __iter__(self) -> Iterator[Point]:
-        yield self.point_1
-        yield self.point_2
-
-    def set(self, line: Line, /) -> Line:
-        self.point_1 = line.point_1
-        self.point_2 = line.point_2
-        return self
-
-    def add(self, point: Point, /) -> Line:
-        self.point_1.add(point)
-        self.point_2.add(point)
-        return self
-
-    def sub(self, point: Point, /) -> Line:
-        self.point_1.sub(point)
-        self.point_2.sub(point)
-        return self
-
-    def mul(self, multiplier: float, /) -> Line:
-        self.point_1.mul(multiplier)
-        self.point_2.mul(multiplier)
-        return self
-
-    def div(self, divisor: float, /) -> Line:
-        self.point_1.div(divisor)
-        self.point_2.div(divisor)
-        return self
-
-    def vec(self) -> Point:
-        return self.point_2.copy().sub(self.point_1)
-
-    def len(self) -> float:
-        return self.vec().len()
-
-    def angle(self, line: Line) -> float:
-        return self.vec().angle(line.vec())
-
-    def dot(self, line: Line) -> float:
-        return self.vec().dot(line.vec())
-
-    def cross(self, line: Line) -> float:
-        return self.vec().cross(line.vec())
-
-    def copy(self) -> Line:
-        return Line(self.point_1, self.point_2)
-
-
-class Polygon:
-    lines: list[Line]
-
-    def __init__(self, points: Iterable[Point]) -> None:
-        lines = [Line(point_1, point_2) for point_1, point_2 in pairwise(points)]
-        lines.append(Line(lines[-1].point_2, lines[0].point_1))
-        self.lines = lines
-
-    def __iter__(self):
-        for line in self.lines:
-            yield line
-
-    def copy(self) -> Polygon:
-        return Polygon([line.point_1 for line in self.lines])

@@ -1,20 +1,28 @@
+"""Python module for finding electric field and potential of a system of charges."""
+
 from __future__ import annotations
+from math import atan2
 from collections.abc import Iterator
 from points import Point
 
 ELECTROSTATIC_CONSTANT: float = 8.9875517923E+9
+"""Electrostatic constant in Newtons, meters squared per Coulombs squared."""
 ELEMENTARY_CHARGE: float = 1.602176634E-19
+"""Basic unit of charge in Coulombs."""
 PROTON_CHARGE: float = ELEMENTARY_CHARGE
+"""Charge of a proton in Coulombs."""
 ELECTRON_CHARGE: float = -ELEMENTARY_CHARGE
-NEUTRON_CHARGE: float = 0.
+"""Charge of an electron in Coulombs."""
+NEUTRON_CHARGE: float = 0
+"""Charge of a neutron in Coulombs."""
 
 
 class System:
-    """An electrical system of static charges."""
+    """System of charges."""
     charges: list[Charge]
 
     def __init__(self, charges: list[Charge]) -> None:
-        """Create a system with the given charges."""
+        """Create a system of charges."""
         self.charges = charges
 
     def field(self, point: Point, /) -> Point:
@@ -45,23 +53,24 @@ class System:
 
 
 class Charge:
-    """A generic charge object which all charges should inherit from."""
+    """Generic charge object which all charge classes should inherit from."""
     charge: float
 
     def __init__(self, charge: float) -> None:
-        """Create a generic charge, not meant to be called directly."""
+        """Create a generic charge object, not meant to be called directly."""
         self.charge = charge
 
     def field(self, point: Point, /) -> Point:
-        """Electric field method that all charges inheriting this class should implement."""
+        """Calculation of electric field method, that all charges inheriting this class should implement."""
         raise NotImplementedError
 
     def potential(self, point: Point, /) -> float:
-        """Electric potential method that all charges inheriting this class should implement."""
+        """Calculation of electric potential method, that all charges inheriting this class should implement."""
         raise NotImplementedError
 
 
 class PointCharge(Charge):
+    """Point charge."""
     point: Point
 
     def __init__(self, charge: float, point: Point) -> None:
@@ -73,9 +82,9 @@ class PointCharge(Charge):
         """Calculate the electric field at the specified point."""
         try:
             field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 2,
-                                self.point.angle(point))
+                                atan2(point.y - self.point.y, point.x - self.point.x))
         except ZeroDivisionError:
-            field = Point.origin()
+            field = Point(0, 0)
         return field
 
     def potential(self, point: Point, /) -> float:
