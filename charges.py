@@ -8,7 +8,7 @@ from points import Point
 ELECTROSTATIC_CONSTANT: float = 8.9875517923E+9
 """Electrostatic constant in Newtons, meters squared per Coulombs squared."""
 ELEMENTARY_CHARGE: float = 1.602176634E-19
-"""Basic unit of charge in Coulombs."""
+"""Charge of basic unit in Coulombs."""
 PROTON_CHARGE: float = ELEMENTARY_CHARGE
 """Charge of a proton in Coulombs."""
 ELECTRON_CHARGE: float = -ELEMENTARY_CHARGE
@@ -54,11 +54,9 @@ class System:
 
 class Charge:
     """Generic charge object which all charge classes inherit from."""
-    charge: float
 
-    def __init__(self, charge: float) -> None:
+    def __init__(self) -> None:
         """Create a generic charge object, not meant to be called directly."""
-        self.charge = charge
 
     def field(self, point: Point, /) -> Point:
         """Calculation of electric field method, that all charges inheriting this class should implement."""
@@ -71,11 +69,13 @@ class Charge:
 
 class PointCharge(Charge):
     """Point charge."""
+    charge: float
     point: Point
 
     def __init__(self, charge: float, point: Point) -> None:
         """Create a point charge."""
-        super().__init__(charge)
+        super().__init__()
+        self.charge = charge
         self.point = point
 
     def field(self, point: Point, /) -> Point:
