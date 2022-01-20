@@ -7,8 +7,8 @@ import csv
 import numpy as np
 import cairo
 from points import Point
-from charges import System, PointCharge, ELEMENTARY_CHARGE
-import sources as src
+from charges import System, PointCharge, ELEMENTARY_CHARGE, PROTON_CHARGE, ELECTRON_CHARGE
+from structures import CircleStructure
 
 ELECTRIC_FIELD_LINE_ITERATION_LIMIT: int = 100
 ELECTRIC_FIELD_LINE_ITERATION_STEP: float = 0.1
@@ -20,16 +20,17 @@ VIEWPORT_RANGE_X: float = VIEWPORT_MAXIMUM_X - VIEWPORT_MINIMUM_X
 VIEWPORT_RANGE_Y: float = VIEWPORT_MAXIMUM_Y - VIEWPORT_MINIMUM_Y
 
 
-IMAGE_LENGTH: int = 600
+IMAGE_LENGTH: int = 200
 IMAGE_AREA: int = IMAGE_LENGTH ** 2
 
 
-electric_system: System = System(
+electric_system: System = System([
     PointCharge(5 * ELEMENTARY_CHARGE, Point(5, 5)),
     PointCharge(-5 * ELEMENTARY_CHARGE, Point(7, 5)),
     PointCharge(5 * ELEMENTARY_CHARGE, Point(5, 7)),
-    PointCharge.electron(Point(4, 4))
-)
+    PointCharge(ELECTRON_CHARGE, Point(4, 4)),
+    CircleStructure(10 * ELEMENTARY_CHARGE, Point(6, 5), 1, 50)
+])
 
 electric_field_lines_source_points: list[Point] = [Point(4, 3), Point(5, 0.99), Point(5, 3), Point(2, 2)]
 electric_field_lines_points: list[deque[Point]] = []
@@ -44,15 +45,15 @@ for electric_field_line_source_point in electric_field_lines_source_points:
     for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
         electric_field = electric_system.field(electric_field_line_point)
         electric_field_line_point.add(
-            electric_field.divide(electric_field.length()).multiply(ELECTRIC_FIELD_LINE_ITERATION_STEP))
+            electric_field.div(electric_field.len()).mul(ELECTRIC_FIELD_LINE_ITERATION_STEP))
         electric_field_line_points.append(copy(electric_field_line_point))
 
     # Finding and recording electric field line points from source to positive
     electric_field_line_point = copy(electric_field_line_source_point)
     for electric_field_line_iteration in range(ELECTRIC_FIELD_LINE_ITERATION_LIMIT):
         electric_field = electric_system.field(electric_field_line_point)
-        electric_field_line_point.subtract(
-            electric_field.divide(electric_field.length()).multiply(ELECTRIC_FIELD_LINE_ITERATION_STEP))
+        electric_field_line_point.sub(
+            electric_field.div(electric_field.len()).mul(ELECTRIC_FIELD_LINE_ITERATION_STEP))
         electric_field_line_points.appendleft(copy(electric_field_line_point))
 
     electric_field_lines_points.append(electric_field_line_points)
@@ -72,14 +73,13 @@ electric_potentials_sorted: list[float] = sorted(
     for electric_potentials_buffer in electric_potentials
     for electric_potential in electric_potentials_buffer
 )
-electric_potential_low: float = electric_potentials_sorted[round(0.05 * (IMAGE_AREA - 1))]
-electric_potential_high: float = electric_potentials_sorted[round(0.95 * (IMAGE_AREA - 1))]
+electric_potential_low: float = electric_potentials_sorted[round(0.01 * (IMAGE_AREA - 1))]
+electric_potential_high: float = electric_potentials_sorted[round(0.99 * (IMAGE_AREA - 1))]
 electric_equipotentials: list[float] = [
     electric_potentials_sorted[round(percentile * (IMAGE_AREA - 1))] for percentile in
     (0.05, 0.25, 0.5, 0.75, 0.95)
 ]
 
-print(electric_field_lines_points)
 
 def viewport(point: Point, /) -> tuple[float, float]:
     return ((point.x - VIEWPORT_MINIMUM_X) / VIEWPORT_RANGE_X,
@@ -105,7 +105,7 @@ for x in range(IMAGE_LENGTH):
         context.fill()
 
 context.scale(IMAGE_LENGTH, IMAGE_LENGTH)
-context.set_line_width(0.003)
+context.set_line_width(0.002)
 context.set_source_rgb(0, 0, 0)
 
 for electric_field_line_points in electric_field_lines_points:
@@ -115,19 +115,21 @@ for electric_field_line_points in electric_field_lines_points:
 
 
 for electric_charge in electric_system.charges:
-
-    if electric_charge.charge > 0:
-        context.set_source_rgb(1, 0, 0)
-    elif electric_charge.charge < 0:
-        context.set_source_rgb(0, 0, 1)
-    else:
-        context.set_source_rgb(0.5, 0.5, 0.5)
-
-    if type(electric_charge) is PointCharge:
+    if isinstance(electric_charge, PointCharge):
+        if electric_charge.charge > 0:
+            context.set_source_rgb(1, 0, 0)
+        elif electric_charge.charge < 0:
+            context.set_source_rgb(0, 0, 1)
+        else:
+            context.set_source_rgb(0.5, 0.5, 0.5)
         context.arc(*viewport(electric_charge.point), 0.02, 0, tau)
-        context.fill()
+        #context.fill()
 
-
+    elif isinstance(electric_charge, CircleStructure):
+        for member in electric_charge.members:
+            context.set_source_rgb(0, 1, 0.5)
+            context.arc(*viewport(electric_charge.position + member.point), 0.02, 0, tau)
+            # context.fill()
 
 
 
