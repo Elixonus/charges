@@ -28,13 +28,13 @@ class Particle(PointCharge):
     velocity: Point
 
     def __init__(self, *, mass: float, charge: float, position: Point, velocity: Point) -> None:
-        """Create a particle that is carrying charge."""
+        """Create a charged particle."""
         super().__init__(charge, position)
         self.mass = mass
         self.velocity = velocity
 
     def force(self, particle: Particle) -> Point:
-        """Calculate the electric force applied on the particle given as a parameter."""
+        """Calculate the electric force applied on the particle given as parameter."""
         force = self.field(particle.point) * particle.charge
         return force
 
