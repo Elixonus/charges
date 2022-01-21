@@ -1,3 +1,5 @@
+"""Python module for dealing with two-dimensional cartesian coordinates and performing vector operations."""
+
 from __future__ import annotations
 from math import cos, hypot, sin
 from collections.abc import Iterator

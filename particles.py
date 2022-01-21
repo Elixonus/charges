@@ -5,9 +5,11 @@ from charges import PointCharge
 
 
 class System:
+    """System of charged particles."""
     particles: list[Particle]
 
     def __init__(self, particles: list[Particle]):
+        """Create a system of charged particles."""
         self.particles = particles
 
     def simulate(self, step):
@@ -21,25 +23,22 @@ class System:
 
 
 class Particle(PointCharge):
+    """Charged particle represented as a point charge."""
     mass: float
     velocity: Point
 
-    def __init__(self, *, mass: float, charge: float, point: Point, velocity: Point) -> None:
-        super().__init__(charge, point)
+    def __init__(self, *, mass: float, charge: float, position: Point, velocity: Point) -> None:
+        """Create a particle that is carrying charge."""
+        super().__init__(charge, position)
         self.mass = mass
         self.velocity = velocity
 
-    def momentum(self) -> Point:
-        return self.mass * self.velocity
-
-    def kinetic(self) -> float:
-        return 1/2 * (self.mass * self.velocity.len() ** 2)
-
     def force(self, particle: Particle) -> Point:
-        force = self.field(particle.point).mul(particle.charge)
+        """Calculate the electric force applied on the particle given as a parameter."""
+        force = self.field(particle.point) * particle.charge
         return force
 
 
-pp = Particle(mass=5, charge=2, point=Point(4, 3), velocity=Point(0, 0))
+pp = Particle(mass=5, charge=2, position=Point(4, 3), velocity=Point(0, 0))
 pp.position = Point(5, 5)
 print(pp.point.x)

@@ -1,11 +1,8 @@
-import argparse
+from __future__ import annotations
+from points import Point
+from charges import System, PointCharge
 
-parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('integers', metavar='N', type=int, nargs='+',
-                    help='an integer for the accumulator')
-parser.add_argument('--sum', dest='accumulate', action='store_const',
-                    const=sum, default=max,
-                    help='sum the integers (default: find the max)')
+charges = []
+print("Welcome to electric field simulation!")
 
-args = parser.parse_args()
-print(args.accumulate(args.integers))
+print("Choose the type of charge you would like to add to the current system.")
