@@ -59,11 +59,11 @@ class Charge:
         """Create a generic charge object, not meant to be called directly."""
 
     def field(self, point: Point, /) -> Point:
-        """Calculation of electric field method, that all charges inheriting this class should implement."""
+        """Calculation of electric field, that all charges inheriting this class should implement."""
         raise NotImplementedError
 
     def potential(self, point: Point, /) -> float:
-        """Calculation of electric potential method, that all charges inheriting this class should implement."""
+        """Calculation of electric potential, that all charges inheriting this class should implement."""
         raise NotImplementedError
 
 

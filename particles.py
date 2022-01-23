@@ -12,14 +12,17 @@ class System:
         """Create a system of charged particles."""
         self.particles = particles
 
-    def simulate(self, step):
-        for particle_1, particle_2 in combinations(self.particles, 2):
-            force_1 = particle_1.force(particle_2)
-            force_2 = -force_1
-            acceleration_1 = force_1 / particle_1.mass
-            acceleration_2 = force_2 / particle_2.mass
-            particle_1.velocity += step * acceleration_1
-            particle_2.velocity += step * acceleration_2
+    def simulate(self, time_step: float, iterations: int = 1):
+        for iteration in range(iterations):
+            for particle_1, particle_2 in combinations(self.particles, 2):
+                force_1 = particle_2.force(particle_1)
+                force_2 = -force_1
+                particle_1.velocity += time_step * (force_1 / particle_1.mass)
+                particle_2.velocity += time_step * (force_2 / particle_2.mass)
+
+            for particle_1, particle_2 in combinations(self.particles, 2):
+                particle_1.point += time_step * particle_1.velocity
+                particle_2.point += time_step * particle_2.velocity
 
 
 class Particle(PointCharge):

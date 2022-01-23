@@ -9,10 +9,18 @@ class Structure(Charge):
     members: list[Charge]
     position: Point
 
-    def __init__(self, members: list[Charge], position: Point):
+    def __init__(self, members: list[Charge], position: Point) -> None:
         super().__init__()
         self.members = members
         self.position = position
+
+    def subdivide(self, subdivisions: int = 2):
+        members_subdivided = []
+
+        for member_1, member_2 in pairwise(self.members):
+            for subdivision in range(subdivisions):
+                point = member_1.point + (member_2.point - member_1.point) * (subdivision / subdivisions)
+                members_subdivided.append(PointCharge(1, point))
 
     def field(self, point: Point) -> Point:
         field = Point(0, 0)
@@ -34,11 +42,16 @@ class FiniteLineStructure(Structure):
         super().__init__(charges, position)
 
 
-
 class CircleStructure(Structure):
     def __init__(self, charge: float, position: Point, radius: float, members: int) -> None:
         charges = [PointCharge(charge / members, Point.polar(radius, tau * (member / members)))
                    for member in range(members)]
+        super().__init__(charges, position)
+
+
+class RegularPolygonStructure(Structure):
+    def __init__(self, charge: float, position: Point, sides: int, radius: float) -> None:
+        charges = [PointCharge(charge / sides, Point.polar(radius, tau * (side / sides))) for side in range(sides)]
         super().__init__(charges, position)
 
 

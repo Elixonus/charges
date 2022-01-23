@@ -20,7 +20,7 @@ VIEWPORT_RANGE_X: float = VIEWPORT_MAXIMUM_X - VIEWPORT_MINIMUM_X
 VIEWPORT_RANGE_Y: float = VIEWPORT_MAXIMUM_Y - VIEWPORT_MINIMUM_Y
 
 
-IMAGE_LENGTH: int = 200
+IMAGE_LENGTH: int = 500
 IMAGE_AREA: int = IMAGE_LENGTH ** 2
 
 
@@ -29,7 +29,7 @@ electric_system: System = System([
     PointCharge(-5 * ELEMENTARY_CHARGE, Point(7, 5)),
     PointCharge(5 * ELEMENTARY_CHARGE, Point(5, 7)),
     PointCharge(ELECTRON_CHARGE, Point(4, 4)),
-    CircleStructure(10 * ELEMENTARY_CHARGE, Point(6, 5), 1, 50)
+    CircleStructure(10 * ELEMENTARY_CHARGE, Point(4, 5), 1, 50)
 ])
 
 electric_field_lines_source_points: list[Point] = [Point(4, 3), Point(5, 0.99), Point(5, 3), Point(2, 2)]
