@@ -1,6 +1,6 @@
 from __future__ import annotations
 from math import tau
-from itertools import pairwise, accumulate
+from itertools import pairwise
 from points import Point
 from charges import Charge, PointCharge
 
