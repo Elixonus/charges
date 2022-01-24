@@ -45,6 +45,7 @@ electric_potentials_interest = [
 
 
 fig, ax = plt.subplots()
+ax.contour(np.linspace(MAP_MINIMUM_X, MAP_MAXIMUM_X, MAP_LENGTH), np.linspace(MAP_MINIMUM_Y, MAP_MAXIMUM_Y, MAP_LENGTH), electric_potentials, levels=electric_potentials_interest, colors="black")
 ax.contourf(np.linspace(MAP_MINIMUM_X, MAP_MAXIMUM_X, MAP_LENGTH), np.linspace(MAP_MINIMUM_Y, MAP_MAXIMUM_Y, MAP_LENGTH), electric_potentials, levels=electric_potentials_interest)
 
 plt.show()
