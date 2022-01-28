@@ -1,4 +1,4 @@
-"""Python module for dealing with two-dimensional cartesian coordinates and performing vector operations."""
+"""Python module for dealing with two-dimensional cartesian coordinates and vector operations."""
 
 from __future__ import annotations
 from math import cos, hypot, sin
@@ -22,7 +22,7 @@ class Point:
 
     def __add__(self, point: Point, /) -> Point:
         """(+) Add caller point with parameter point, without modification to point."""
-        return self.copy().__iadd__(point)
+        return self.copy().add(point)
 
     def __iadd__(self, point: Point, /) -> Point:
         """(+=) Add caller point with parameter point, with modification to caller point."""
@@ -30,7 +30,7 @@ class Point:
 
     def __sub__(self, point: Point, /) -> Point:
         """(-) Subtract parameter point from caller point, without modification to point."""
-        return self.copy().__isub__(point)
+        return self.copy().sub(point)
 
     def __isub__(self, point: Point, /) -> Point:
         """(-=) Subtract parameter point from caller point, with modification to caller point."""
@@ -38,11 +38,11 @@ class Point:
 
     def __mul__(self, multiplier: float, /) -> Point:
         """(*) Multiply point coordinates by a number, without modification to point."""
-        return self.copy().__imul__(multiplier)
+        return self.copy().mul(multiplier)
 
     def __rmul__(self, multiplier: float, /) -> Point:
         """(*) Multiply point coordinates by a number, without modification to point."""
-        return self.__mul__(multiplier)
+        return self.copy().mul(multiplier)
 
     def __imul__(self, multiplier: float, /) -> Point:
         """(*=) Multiply point coordinates by a number, with modification to point."""
@@ -50,7 +50,7 @@ class Point:
 
     def __truediv__(self, divisor: float, /) -> Point:
         """(/) Divide point coordinates by a number, without modification to point."""
-        return self.copy().__truediv__(divisor)
+        return self.copy().div(divisor)
 
     def __itruediv__(self, divisor: float, /) -> Point:
         """(/=) Divide point coordinates by a number, with modification to point."""

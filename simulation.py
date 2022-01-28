@@ -11,7 +11,7 @@ MAP_MAXIMUM_X: float = 10.
 MAP_MAXIMUM_Y: float = 10.
 MAP_RANGE_X: float = MAP_MAXIMUM_X - MAP_MINIMUM_X
 MAP_RANGE_Y: float = MAP_MAXIMUM_Y - MAP_MINIMUM_Y
-MAP_LENGTH: int = 200
+MAP_LENGTH: int = 100
 
 
 electric_system = System([
@@ -51,5 +51,5 @@ electric_potentials_interest = [
 
 fig, ax = plt.subplots()
 ax.contourf(electric_potentials, extent=(MAP_MINIMUM_X, MAP_MAXIMUM_X, MAP_MINIMUM_Y, MAP_MAXIMUM_Y), levels=electric_potentials_interest, extend="both")
-ax.contour(electric_potentials, extent=(MAP_MINIMUM_X, MAP_MAXIMUM_X, MAP_MINIMUM_Y, MAP_MAXIMUM_Y), levels=electric_potentials_interest, colors="black", linestyles="solid")
+ax.contour(electric_potentials, extent=(MAP_MINIMUM_X, MAP_MAXIMUM_X, MAP_MINIMUM_Y, MAP_MAXIMUM_Y), levels=electric_potentials_interest, colors="black", linestyles="solid", linewidths=1)
 plt.show()

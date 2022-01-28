@@ -1,47 +1,48 @@
 from __future__ import annotations
 from itertools import combinations
-from points import Point
-from charges import PointCharge
+from charges import PointCharge, Point
 
 
 class System:
     """System of charged particles."""
     particles: list[Particle]
 
-    def __init__(self, particles: list[Particle]):
+    def __init__(self, particles: list[Particle]) -> None:
         """Create a system of charged particles."""
         self.particles = particles
 
-    def simulate(self, time_step: float, iterations: int = 1):
-        for iteration in range(iterations):
-            for particle_1, particle_2 in combinations(self.particles, 2):
-                force_1 = particle_2.force(particle_1)
-                force_2 = -force_1
-                particle_1.velocity += time_step * (force_1 / particle_1.mass)
-                particle_2.velocity += time_step * (force_2 / particle_2.mass)
+    def momentum(self) -> Point:
+        momentum = Point(0, 0)
+        for particle in self.particles:
+            momentum += particle.momentum()
+        return momentum
 
-            for particle_1, particle_2 in combinations(self.particles, 2):
-                particle_1.point += time_step * particle_1.velocity
-                particle_2.point += time_step * particle_2.velocity
+    def iterate(self, time: float) -> System:
+        # Calculation of velocity.
+        for particle_1, particle_2 in combinations(self.particles, 2):
+            particle_1.velocity += (particle_1.force(particle_2) / particle_1.mass) * time
+            particle_2.velocity += (particle_2.force(particle_1) / particle_2.mass) * time
+        # Calculation of position.
+        for particle in self.particles:
+            particle.point += particle.velocity * time
+        return self
 
 
 class Particle(PointCharge):
-    """Charged particle represented as a point charge."""
+    """Charged particle with mass and velocity."""
     mass: float
     velocity: Point
 
-    def __init__(self, *, mass: float, charge: float, position: Point, velocity: Point) -> None:
+    def __init__(self, charge: float, mass: float, position: Point, velocity: Point) -> None:
         """Create a charged particle."""
         super().__init__(charge, position)
         self.mass = mass
         self.velocity = velocity
 
+    def momentum(self) -> Point:
+        return self.mass * self.velocity
+
     def force(self, particle: Particle) -> Point:
-        """Calculate the electric force applied on the particle given as parameter."""
+        """Calculate the electric force applied on the particle itself."""
         force = self.field(particle.point) * particle.charge
         return force
-
-
-pp = Particle(mass=5, charge=2, position=Point(4, 3), velocity=Point(0, 0))
-pp.position = Point(5, 5)
-print(pp.point.x)
