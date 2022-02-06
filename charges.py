@@ -1,7 +1,7 @@
 """Python module for finding electric field and potential of a system of charges."""
 
 from __future__ import annotations
-from math import atan2
+from math import atan2, tau
 from collections.abc import Iterator
 from points import Point
 
@@ -81,8 +81,7 @@ class PointCharge(Charge):
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point."""
         try:
-            field = Point.polar(ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 2,
-                                atan2(point.y - self.point.y, point.x - self.point.x))
+            field = ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 3 * (point - self.point)
         except ZeroDivisionError:
             field = Point(0, 0)
         return field
@@ -94,3 +93,54 @@ class PointCharge(Charge):
         except ZeroDivisionError:
             potential = 0
         return potential
+
+
+class LineCharge(Charge):
+    charge_density: float
+    point_1: Point
+    point_2: Point
+
+    def __init__(self, charge_density: float, point_1: Point, point_2: Point) -> None:
+        super().__init__()
+        self.charge_density = charge_density
+        self.point_1 = point_1
+        self.point_2 = point_2
+
+    def field(self, point: Point, /) -> Point:
+        line = self.point_2 - self.point_1
+        closest = self.point_1 + (line @ (point - self.point_1) / self.point_1.dist(self.point_2) ** 2) * line
+        field = 2 * ELECTROSTATIC_CONSTANT * self.charge_density / point.dist(closest) ** 2 * (point - closest)
+        return field
+
+    def potential(self, point: Point, /) -> float:
+        pass
+
+"""
+class LineCharge(Charge):
+    charge_density: float
+    point_1: Point
+    point_2: Point
+
+    def __init__(self, charge_density: float, point_1: Point, point_2: Point) -> None:
+        super().__init__()
+        self.charge_density = charge_density
+        self.point_1 = point_1
+        self.point_2 = point_2
+
+    def field(self, point: Point, /) -> Point:
+        line = atan2(self.point_1.y - self.point_2.y, self.point_1.x - self.point_2.x)
+
+        line = (self.point_2 - self.point_1) / self.point_1.dist(self.point_2)
+
+        line_point = self.point_1 + (line @ (point - self.point_1)) * line
+        coef = 2 * ELECTROSTATIC_CONSTANT * self.charge_density
+
+        vector = (line_point - point).div(point.dist(line_point))
+        return line_point / line_point.len()
+
+
+
+    def potential(self, point: Point, /) -> float:
+        pass
+
+"""

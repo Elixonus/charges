@@ -121,8 +121,3 @@ class Point:
     def copy(self) -> Point:
         """Copy the point instance."""
         return Point(self.x, self.y)
-
-    @classmethod
-    def polar(cls, radius: float, theta: float) -> Point:
-        """Create a point from polar coordinates."""
-        return cls(radius * cos(theta), radius * sin(theta))
