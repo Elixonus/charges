@@ -12,7 +12,7 @@ class System:
         self.particles = particles
 
     def momentum(self) -> Point:
-        momentum = Point(0, 0)
+        momentum = Point(0, 0, 0)
         for particle in self.particles:
             momentum += particle.momentum()
         return momentum
@@ -24,7 +24,7 @@ class System:
             particle_2.velocity += (particle_2.force(particle_1) / particle_2.mass) * time
         # Calculation of position.
         for particle in self.particles:
-            particle.point += particle.velocity * time
+            particle.iterate(time)
         return self
 
 
@@ -41,6 +41,10 @@ class Particle(PointCharge):
 
     def momentum(self) -> Point:
         return self.mass * self.velocity
+
+    def iterate(self, time: float) -> Particle:
+        self.point += self.velocity * time
+        return self
 
     def force(self, particle: Particle) -> Point:
         """Calculate the electric force applied on the particle itself."""

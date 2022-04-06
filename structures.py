@@ -1,63 +1,30 @@
 from __future__ import annotations
-from math import tau
-from itertools import pairwise
 from points import Point
 from charges import Charge, PointCharge
 
 
 class Structure(Charge):
     members: list[Charge]
-    position: Point
 
-    def __init__(self, members: list[Charge], position: Point) -> None:
+    def __init__(self, members: list[Charge]) -> None:
         super().__init__()
         self.members = members
-        self.position = position
-
-    def subdivide(self, subdivisions: int = 2):
-        members_subdivided = []
-
-        for member_1, member_2 in pairwise(self.members):
-            for subdivision in range(subdivisions):
-                point = member_1.point + (member_2.point - member_1.point) * (subdivision / subdivisions)
-                members_subdivided.append(PointCharge(1, point))
 
     def field(self, point: Point) -> Point:
-        field = Point(0, 0)
+        field = Point(0, 0, 0)
         for charge in self.members:
-            field += charge.field(point - self.position)
+            field += charge.field(point)
         return field
 
     def potential(self, point: Point) -> float:
         potential = 0
         for charge in self.members:
-            potential += charge.potential(point - self.position)
+            potential += charge.potential(point)
         return potential
 
 
 class FiniteLineStructure(Structure):
-    def __init__(self, charge: float, position: Point, length: float, members: int) -> None:
-        charges = [PointCharge(charge / members, Point((member / (members - 1) - 0.5) * length, 0))
+    def __init__(self, charge: float, position_1: Point, position_2: Point, members: int) -> None:
+        charges = [PointCharge(charge / members, position_1 + (position_2 - position_1) * member / (members - 1))
                    for member in range(members)]
-        super().__init__(charges, position)
-
-
-class CircleStructure(Structure):
-    def __init__(self, charge: float, position: Point, radius: float, members: int) -> None:
-        charges = [PointCharge(charge / members, Point.polar(radius, tau * (member / members)))
-                   for member in range(members)]
-        super().__init__(charges, position)
-
-
-class RegularPolygonStructure(Structure):
-    def __init__(self, charge: float, position: Point, sides: int, radius: float) -> None:
-        charges = [PointCharge(charge / sides, Point.polar(radius, tau * (side / sides))) for side in range(sides)]
-        super().__init__(charges, position)
-
-
-class PathStructure(Structure):
-    def __init__(self, charge: float, position: Point, vertices: list[Point], members: int) -> None:
-        charges = []
-        perimeter: float = sum(vertex_1.dist(vertex_2) for vertex_1, vertex_2 in pairwise(vertices))
-
-c = CircleStructure(5, Point(1, 1), 5, 10)
+        super().__init__(charges)
