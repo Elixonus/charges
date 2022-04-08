@@ -54,9 +54,11 @@ class System:
 
 class Charge(ABC):
     """Generic charge object which all charge classes inherit from."""
+    charge: float
 
-    def __init__(self) -> None:
+    def __init__(self, charge: float) -> None:
         """Create a generic charge object, not meant to be called directly."""
+        self.charge = charge
 
     @abstractmethod
     def field(self, point: Point, /) -> Point:
@@ -71,12 +73,11 @@ class Charge(ABC):
 
 class PointCharge(Charge):
     """Point charge."""
-    charge: float
     point: Point
 
     def __init__(self, charge: float, point: Point) -> None:
         """Create a point charge."""
-        super().__init__()
+        super().__init__(charge)
         self.charge = charge
         self.point = point
 
@@ -94,4 +95,35 @@ class PointCharge(Charge):
             potential = ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point)
         except ZeroDivisionError:
             potential = 0
+        return potential
+
+
+class FiniteLineCharge(Charge):
+    """Finite line charge."""
+    point_charges: list[PointCharge]
+    point_1: Point
+    point_2: Point
+
+    def __init__(self, charge: float, point_1: Point, point_2: Point, number_point_charges: int) -> None:
+        super().__init__(charge)
+        self.charge = charge
+        self.point_1 = point_1
+        self.point_2 = point_2
+        self.point_charges = []
+        for n in range(number_point_charges):
+            ratio = n / (number_point_charges - 1)
+            point = ratio * point_1 + (1 - ratio) * point_2
+            point_charge = PointCharge(charge / number_point_charges, point)
+            self.point_charges.append(point_charge)
+
+    def field(self, point: Point, /) -> Point:
+        field = Point(0, 0)
+        for point_charge in self.point_charges:
+            field += point_charge.field(point)
+        return field
+
+    def potential(self, point: Point, /) -> float:
+        potential = 0
+        for point_charge in self.point_charges:
+            potential += point_charge.potential(point)
         return potential
