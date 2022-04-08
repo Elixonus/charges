@@ -12,7 +12,7 @@ class System:
         self.particles = particles
 
     def momentum(self) -> Point:
-        momentum = Point(0, 0, 0)
+        momentum = Point(0, 0)
         for particle in self.particles:
             momentum += particle.momentum()
         return momentum
