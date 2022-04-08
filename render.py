@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
-from charges import System, PointCharge, FiniteLineCharge, Point
+from charges import System, Point
 
 
 def render_system(system: System, minimum: Point, maximum: Point, title: str, size: int = 500) -> None:
@@ -12,7 +11,7 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, si
     potentials_sorted = sorted(potential for potentials_buffer in potentials for potential in potentials_buffer)
     potential_low = potentials_sorted[round(0.05 * (len(potentials_sorted) - 1))]
     potential_high = potentials_sorted[round(0.95 * (len(potentials_sorted) - 1))]
-    percentiles = np.linspace(0.01, 0.99, 100)
+    percentiles = [((n / 99) * 0.98) + 0.01 for n in range(100)]
     potentials_interest = [
         potentials_sorted[round(0.01 * (len(potentials_sorted) - 1))],
         potentials_sorted[round(0.05 * (len(potentials_sorted) - 1))],
