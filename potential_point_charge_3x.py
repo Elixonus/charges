@@ -1,6 +1,13 @@
+from time import sleep
 from points import Point
 from charges import System, PointCharge, PROTON_CHARGE, ELECTRON_CHARGE
 from render import render_system
+
+print("This program will show the electric potential around three point charges.")
+sleep(2)
+print("You can enter the electric charge in Coulombs of each particle.")
+sleep(2)
+
 
 
 system = System([PointCharge(charge=PROTON_CHARGE, point=Point(2, 5)),

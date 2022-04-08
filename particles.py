@@ -50,3 +50,9 @@ class Particle(PointCharge):
         """Calculate the electric force applied on the particle itself."""
         force = self.field(particle.point) * particle.charge
         return force
+
+
+if __name__ == "__main__":
+    from time import sleep
+    print("This python file is just a library, feel free to try out the other programs.")
+    sleep(5)
