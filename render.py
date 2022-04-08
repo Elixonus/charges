@@ -8,7 +8,7 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, si
     potentials = [[system.potential(Point(
         minimum.x + difference.x * (x / (size - 1)),
         minimum.y + difference.y * (y / (size - 1))
-    )) for y in range(size)] for x in range(size)]
+    )) for x in range(size)] for y in range(size)]
     potentials_sorted = sorted(potential for potentials_buffer in potentials for potential in potentials_buffer)
     potential_low = potentials_sorted[round(0.05 * (len(potentials_sorted) - 1))]
     potential_high = potentials_sorted[round(0.95 * (len(potentials_sorted) - 1))]
