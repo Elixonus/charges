@@ -3,7 +3,7 @@ import numpy as np
 from charges import System, PointCharge, FiniteLineCharge, Point
 
 
-def render_system(system: System, minimum: Point, maximum: Point, size: int = 500) -> None:
+def render_system(system: System, minimum: Point, maximum: Point, title: str, size: int = 500) -> None:
     difference = maximum - minimum
     potentials = [[system.potential(Point(
         minimum.x + difference.x * (x / (size - 1)),
@@ -29,6 +29,10 @@ def render_system(system: System, minimum: Point, maximum: Point, size: int = 50
         potentials_sorted[round(0.99 * (len(potentials_sorted) - 1))]
     ]
     fig, ax = plt.subplots()
-    ax.contourf(potentials, extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, extend="both")
+    contourf = ax.contourf(potentials, cmap="seismic", extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, extend="both")
     ax.contour(potentials, extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, colors="black", linestyles="solid", linewidths=1)
+    plt.colorbar(contourf)
+    plt.xlabel("$x$ (meters)")
+    plt.ylabel("$y$ (meters)")
+    plt.title(title)
     plt.show()
