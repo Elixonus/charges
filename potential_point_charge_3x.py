@@ -1,7 +1,7 @@
 from time import sleep
 from math import isnan
 from points import Point
-from charges import System, PointCharge, PROTON_CHARGE, ELECTRON_CHARGE
+from charges import System, PointCharge
 from render import render_system
 
 print("This program will show the electric potential around three point charges.")
