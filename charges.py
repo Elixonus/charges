@@ -27,7 +27,7 @@ class System:
 
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point in the system."""
-        field = Point(0, 0, 0)
+        field = Point(0, 0)
         for charge in self.charges:
             field += charge.field(point)
         return field
@@ -86,7 +86,7 @@ class PointCharge(Charge):
         try:
             field = (ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 2) * (point - self.point).norm()
         except ZeroDivisionError:
-            field = Point(0, 0, 0)
+            field = Point(0, 0)
         return field
 
     def potential(self, point: Point, /) -> float:
