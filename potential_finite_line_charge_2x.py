@@ -2,7 +2,7 @@ from time import sleep
 from math import isnan
 from points import Point
 from charges import System, FiniteLineCharge
-from render import render_system
+from render_potential import render_system
 
 print("This program will show the electric potential around two finite line charges.")
 sleep(2)

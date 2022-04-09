@@ -27,12 +27,20 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, si
         potentials_sorted[round(0.95 * (len(potentials_sorted) - 1))],
         potentials_sorted[round(0.99 * (len(potentials_sorted) - 1))]
     ]
+
     fig, ax = plt.subplots()
     contourf = ax.contourf(potentials, cmap="seismic", extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, extend="both")
     ax.contour(potentials, extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, colors="black", linestyles="solid", linewidths=1)
+    ax.set_title(title)
+    ax.set_xlabel("Horizontal displacement (meters)")
+    ax.set_ylabel("Vertical displacement (meters)")
+    ax.set_aspect("equal")
     cbar = plt.colorbar(contourf)
-    plt.xlabel("Horizontal displacement (meters)")
-    plt.ylabel("Vertical displacement (meters)")
-    cbar.ax.set_ylabel("Joules per coulomb (Volts)")
-    plt.title(title)
+    cbar.set_label("Joules per coulomb (Volts)")
     plt.show()
+
+
+if __name__ == "__main__":
+    from time import sleep
+    print("This python file is just a library, feel free to try out the other programs.")
+    sleep(5)
