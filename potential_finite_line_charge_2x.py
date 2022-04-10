@@ -36,4 +36,4 @@ while True:
 
 system = System([FiniteLineCharge(charge_1, Point(3, 3), Point(3, 7), 100),
                  FiniteLineCharge(charge_2, Point(7, 3), Point(7, 7), 100)])
-render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric potential around two finite line charges", size=100)
+render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric potential around two finite line charges")

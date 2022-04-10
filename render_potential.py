@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from charges import System, Point
 
 
-def render_system(system: System, minimum: Point, maximum: Point, title: str, size: int = 500) -> None:
+def render_system(system: System, minimum: Point, maximum: Point, title: str, size: int = 100) -> None:
     difference = maximum - minimum
     potentials = [[system.potential(Point(
         minimum.x + difference.x * (x / (size - 1)),

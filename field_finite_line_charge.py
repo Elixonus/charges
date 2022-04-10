@@ -25,4 +25,4 @@ while True:
 
 system = System([FiniteLineCharge(charge, Point(3, 3), Point(7, 7), 100),
                  PointCharge(1, Point(4, 8))])
-render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field lines around a finite line charge and point charge", size=100)
+render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field lines around a finite line charge and point charge")
