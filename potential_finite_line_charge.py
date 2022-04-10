@@ -23,6 +23,5 @@ while True:
     break
 
 
-system = System([FiniteLineCharge(charge, Point(3, 3), Point(7, 7), 100),
-                 PointCharge(1, Point(4, 8))])
+system = System([FiniteLineCharge(charge, Point(3, 3), Point(7, 7), 100)])
 render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric potential around a finite line charge and point charge")
