@@ -31,4 +31,4 @@ for n in range(100):
     charges.append(PointCharge(charge / 100, point))
 
 system = System(charges)
-render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field and potential around\na square of charge")
+render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field and potential around\na circle of charge")
