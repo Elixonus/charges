@@ -47,4 +47,5 @@ while True:
 system = System([PointCharge(charge=charge_1, point=Point(2, 5)),
                  PointCharge(charge=charge_2, point=Point(4, 6)),
                  PointCharge(charge=charge_3, point=Point(8, 5))])
+print()
 render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field and potential around\nthree points charges")

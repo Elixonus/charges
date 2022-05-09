@@ -1,7 +1,7 @@
 from time import sleep
 from math import isnan
 from points import Point
-from charges import System, FiniteLineCharge, PointCharge
+from charges import System, FiniteLineCharge
 from render import render_system
 
 print("This program will show the electric field and potential around a finite line charge.")
@@ -24,4 +24,5 @@ while True:
 
 
 system = System([FiniteLineCharge(charge, Point(3, 3), Point(7, 7), 100)])
+print()
 render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field and potential around a\nfinite line charge")

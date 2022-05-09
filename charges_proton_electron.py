@@ -8,4 +8,5 @@ sleep(2)
 
 system = System([PointCharge(charge=PROTON_CHARGE, point=Point(2, 5)),
                  PointCharge(charge=ELECTRON_CHARGE, point=Point(8, 5))])
+print()
 render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field and potential around\na proton and an electron")
