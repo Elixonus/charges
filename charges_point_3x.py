@@ -2,9 +2,9 @@ from time import sleep
 from math import isnan
 from points import Point
 from charges import System, PointCharge
-from render_field import render_system
+from render import render_system
 
-print("This program will show the electric field lines around three point charges.")
+print("This program will show the electric field and potential around three point charges.")
 sleep(2)
 print("You can enter the electric charge in Coulombs of each particle.")
 sleep(2)
@@ -47,4 +47,4 @@ while True:
 system = System([PointCharge(charge=charge_1, point=Point(2, 5)),
                  PointCharge(charge=charge_2, point=Point(4, 6)),
                  PointCharge(charge=charge_3, point=Point(8, 5))])
-render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field lines around three points charges")
+render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field and potential around three points charges")
