@@ -50,7 +50,7 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, fi
     ax.set_aspect("equal")
     cbar = plt.colorbar(contourf)
     cbar.set_label("Joules per coulomb (Volts)")
-    print("Done!")
+    print("Done, displaying results...")
     plt.show()
 
 
