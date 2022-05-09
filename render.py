@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 from charges import System, Point
 
 
@@ -26,9 +27,10 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, fi
         potentials_sorted[round(0.95 * (len(potentials_sorted) - 1))],
         potentials_sorted[round(0.99 * (len(potentials_sorted) - 1))]
     ]
+    norm_center = colors.TwoSlopeNorm(vcenter=0)
     fig, ax = plt.subplots()
-    contourf = ax.contourf(potentials, cmap="seismic", extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, extend="both")
-    ax.contour(potentials, extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, colors="black", linestyles="solid", linewidths=1)
+    contourf = ax.contourf(potentials, cmap="seismic", extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, extend="both", norm=norm_center)
+    ax.contour(potentials, extent=(minimum.x, maximum.x, minimum.y, maximum.y), levels=potentials_interest, colors="black", linestyles="solid", linewidths=1, norm=norm_center)
     x = np.linspace(minimum.x, maximum.x, field_size)
     y = np.linspace(minimum.y, maximum.y, field_size)
     u = np.empty((field_size, field_size))
