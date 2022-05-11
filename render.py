@@ -2,10 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from charges import System, Point
-
+from text import text_system
 
 def render_system(system: System, minimum: Point, maximum: Point, title: str, field_size: int = 20, potential_size: int = 100) -> None:
     print("Solving electric field and potential equations numerically...")
+
+    text_system(system, minimum, maximum, potential_size=20)
+    return
+
     difference = maximum - minimum
     potentials = [[system.potential(Point(
         minimum.x + difference.x * (x / (potential_size - 1)),
