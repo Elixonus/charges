@@ -6,7 +6,7 @@ from charges import System
 from points import Point
 
 console = Console()
-# console.print("A", style="rgb(255,0,0)")
+
 
 def text_system(system: System, minimum: Point, maximum: Point, potential_size: int = 10) -> None:
     difference = maximum - minimum
@@ -15,8 +15,8 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
         minimum.y + difference.y * (y / (potential_size - 1))
     )) for x in range(potential_size)] for y in range(potential_size)]
     potentials_sorted = sorted(potential for potentials_buffer in potentials for potential in potentials_buffer)
-    potential_low = potentials_sorted[round(0.1 * (len(potentials_sorted) - 1))]
-    potential_high = potentials_sorted[round(0.9 * (len(potentials_sorted) - 1))]
+    potential_low = potentials_sorted[round(0.02 * (len(potentials_sorted) - 1))]
+    potential_high = potentials_sorted[round(0.98 * (len(potentials_sorted) - 1))]
 
     normals = [[0. for x in range(potential_size)] for y in range(potential_size)]
     for x in range(potential_size):

@@ -6,10 +6,6 @@ from text import text_system
 
 def render_system(system: System, minimum: Point, maximum: Point, title: str, field_size: int = 20, potential_size: int = 100) -> None:
     print("Solving electric field and potential equations numerically...")
-
-    text_system(system, minimum, maximum, potential_size=20)
-    return
-
     difference = maximum - minimum
     potentials = [[system.potential(Point(
         minimum.x + difference.x * (x / (potential_size - 1)),
@@ -57,6 +53,7 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, fi
     cbar = plt.colorbar(contourf)
     cbar.set_label("Joules per coulomb (Volts)")
     print("Done, displaying results...")
+    text_system(system, minimum, maximum, potential_size=20)
     plt.show()
 
 
