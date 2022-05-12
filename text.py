@@ -1,5 +1,5 @@
 from math import sqrt
-from random import choice
+from random import choice, randint
 from string import ascii_letters
 from rich.console import Console
 from charges import System
@@ -35,10 +35,10 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
             normal = normals[x][y]
             if normal < 0:
                 channel = round(255 * (normal + 1))
-                color = f"rgb({channel},{channel},255)"
+                color = f"rgb({channel},{channel},{255 - channel // 2})"
             elif normal > 0:
                 channel = round(255 * (1 - normal))
-                color = f"rgb(255,{channel},{channel})"
+                color = f"rgb({255 - channel // 2},{channel},{channel})"
             else:
                 color = "rgb(255,255,255)"
             console.print(choice(ascii_letters) + choice(ascii_letters), style=f"{color}", end="")
