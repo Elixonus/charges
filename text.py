@@ -35,10 +35,10 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
             normal = normals[x][y]
             if normal < 0:
                 channel = round(255 * (normal + 1))
-                color = f"rgb({channel},{channel},{255 - channel // 2})"
+                color = f"rgb({channel},{channel},{255})"
             elif normal > 0:
                 channel = round(255 * (1 - normal))
-                color = f"rgb({255 - channel // 2},{channel},{channel})"
+                color = f"rgb({255},{channel},{channel})"
             else:
                 color = "rgb(255,255,255)"
             console.print(choice(ascii_letters) + choice(ascii_letters), style=f"{color}", end="")
