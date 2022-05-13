@@ -35,7 +35,6 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, fi
     y = np.linspace(minimum.y, maximum.y, field_size)
     u = np.empty((field_size, field_size))
     v = np.empty((field_size, field_size))
-
     for a in range(field_size):
         for b in range(field_size):
             field = system.field(Point(x[a], y[b]))
@@ -52,7 +51,7 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, fi
     ax.set_aspect("equal")
     cbar = plt.colorbar(contourf)
     cbar.set_label("Joules per coulomb (Volts)")
-    print("Done, displaying results...")
+    print("Done, displaying results...\n")
     text_system(system, minimum, maximum, potential_size=20)
     plt.show()
 

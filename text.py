@@ -30,9 +30,11 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
                 normal = 0
             normals[x][y] = normal
 
-    for x in range(potential_size):
-        for y in range(potential_size):
-            normal = normals[x][y]
+    console.print("=" * (2 * potential_size + 2))
+    for y in range(potential_size):
+        console.print("=", end="")
+        for x in range(potential_size):
+            normal = normals[x][-y-1]
             if normal < 0:
                 channel = round(255 * (normal + 1))
                 color = f"rgb({channel},{channel},{255})"
@@ -42,4 +44,5 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
             else:
                 color = "rgb(255,255,255)"
             console.print(choice(ascii_letters) + choice(ascii_letters), style=f"{color}", end="")
-        console.print("")
+        console.print("=")
+    console.print("=" * (2 * potential_size + 2))
