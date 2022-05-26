@@ -30,15 +30,15 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
                 normal = 0
             normals[x][y] = normal
 
-    console.print(" " + ("#" * (2 * potential_size + 6)) + " ", style="rgb(98,0,128)")
-    console.print("##", end="", style="rgb(98,0,128)")
-    console.print("#" * (2 * potential_size + 4), end="", style="rgb(255,0,162)")
-    console.print("##", style="rgb(98,0,128)")
+    console.print(" " + ("#" * (2 * potential_size + 6)) + " ", style="rgb(60,60,60)")
+    console.print("##", end="", style="rgb(60,60,60)")
+    console.print("#" * (2 * potential_size + 4), end="", style="rgb(90,90,90)")
+    console.print("##", style="rgb(60,60,60)")
     for x in range(potential_size):
         for _ in range(2):
-            console.print("#", end="", style="rgb(98,0,128)")
+            console.print("#", end="", style="rgb(60,60,60)")
         for _ in range(2):
-            console.print("#", end="", style="rgb(255,0,162)")
+            console.print("#", end="", style="rgb(90,90,90)")
         for y in range(potential_size):
             normal = normals[-x-1][y]
             if normal < 0:
@@ -51,11 +51,11 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
                 color = "rgb(255,255,255)"
             console.print(choice(ascii_letters) + choice(ascii_letters), style=f"{color}", end="")
         for _ in range(2):
-            console.print("#", style="rgb(255,0,162)", end="")
+            console.print("#", style="rgb(90,90,90)", end="")
         for _ in range(2):
-            console.print("#", style="rgb(98,0,128)", end="")
+            console.print("#", style="rgb(60,60,60)", end="")
         console.print("")
-    console.print("##", end="", style="rgb(98,0,128)")
-    console.print("#" * (2 * potential_size + 4), end="", style="rgb(255,0,162)")
-    console.print("##", style="rgb(98,0,128)")
-    console.print(" " + ("#" * (2 * potential_size + 6)) + " ", style="rgb(98,0,128)")
+    console.print("##", end="", style="rgb(60,60,60)")
+    console.print("#" * (2 * potential_size + 4), end="", style="rgb(90,90,90)")
+    console.print("##", style="rgb(60,60,60)")
+    console.print(" " + ("#" * (2 * potential_size + 6)) + " ", style="rgb(60,60,60)")
