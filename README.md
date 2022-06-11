@@ -1,5 +1,5 @@
 # charges
-Simulates electric potential and field around charges of arbitrary shape using the finite element method.
+Simulates electric potential and field around charges of arbitrary shape using finite discretization methods.
 
 ## Usage
 ```pip install -r requirements.txt```
