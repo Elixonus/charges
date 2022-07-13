@@ -8,9 +8,9 @@ Simulates electric potential and field around charges of arbitrary shape using f
 pip install -r requirements.txt
 ```
 ```
-python charges_example
+python charges/<charges_example>
 ```
-where `example` is the remainder file name of the program you want to run.
+where `<charges_example>` is the file name of the program you want to run.
 
 ## Simulation
 
