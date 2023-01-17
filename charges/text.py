@@ -59,3 +59,8 @@ def text_system(system: System, minimum: Point, maximum: Point, potential_size: 
     console.print("#" * (2 * potential_size + 4), end="", style="rgb(90,90,90)")
     console.print("##", style="rgb(60,60,60)")
     console.print(" " + ("#" * (2 * potential_size + 6)) + " ", style="rgb(60,60,60)")
+
+if __name__ == "__main__":
+    from time import sleep
+    print("This python file is just a library, feel free to try out the other programs.")
+    sleep(5)
