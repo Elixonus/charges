@@ -1,0 +1,11 @@
+charges/
+    index.html
+    plots/
+        create/
+            In: JSON
+            Out: SID/no
+        view/
+            In: SID
+            Out: IMAGE/no
+        delete/
+            In: SID/no
