@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 import glob
 import random
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from charges import System, PointCharge, FiniteLineCharge
@@ -44,20 +44,23 @@ class PlotData(BaseModel):
     view: ViewData
 
 
-files = glob.glob("plots/*")
+if os.path.isdir("plots"):
+    files = glob.glob("plots/*")
 
-for file in files:
-    os.remove(file)
-
-os.rmdir("plots")
-os.mkdir("plots")
+    for file in files:
+        os.remove(file)
+else:
+    os.mkdir("plots")
 
 app = FastAPI()
 
 
 @app.post("/plots/create")
 def plot_create(plot: PlotData):
-    plot_id = "P" + "".join(random.choices("0123456789ABCDEF", k=9))
+    while True:
+        plot_id = "P" + "".join(random.choices("0123456789ABCDEF", k=9))
+        if plot_id not in plot_ids:
+            break
     plot_ids.append(plot_id)
 
     charges = []
@@ -72,7 +75,7 @@ def plot_create(plot: PlotData):
         charge = finite_line_charge_data.charge
         point_1 = Point(finite_line_charge_data.point_1.x, finite_line_charge_data.point_1.y)
         point_2 = Point(finite_line_charge_data.point_2.x, finite_line_charge_data.point_2.y)
-        finite_line_charge = FiniteLineCharge(charge, point_1, point_2, 10)
+        finite_line_charge = FiniteLineCharge(charge, point_1, point_2, 25)
         charges.append(finite_line_charge)
 
     system = System(charges)
@@ -81,7 +84,7 @@ def plot_create(plot: PlotData):
         render(plot_id, system, Point(plot.view.min.x, plot.view.min.y), Point(plot.view.max.x, plot.view.max.y),
                "Electric Field and Potential")
     except:
-        return {"error": "Could not solve and plot the system."}
+        raise HTTPException(status_code=500)
 
     return {"plot_id": plot_id}
 
@@ -90,7 +93,7 @@ def plot_create(plot: PlotData):
 def plot_view(plot_id: str):
     if plot_id in plot_ids:
         return FileResponse(f"plots/{plot_id}.png")
-    return "false"
+    raise HTTPException(status_code=400)
 
 
 @app.get("/plots/list")
