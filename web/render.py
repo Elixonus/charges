@@ -2,10 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from charges import System, Point
-from text import text_system
 
-def render_system(system: System, minimum: Point, maximum: Point, title: str, field_size: int = 20, potential_size: int = 100) -> None:
-    print("Solving electric field and potential equations numerically...")
+
+def render(plot_id: str, system: System, minimum: Point, maximum: Point, title: str, field_size: int = 20, potential_size: int = 100) -> None:
     difference = maximum - minimum
     potentials = [[system.potential(Point(
         minimum.x + difference.x * (x / (potential_size - 1)),
@@ -51,12 +50,4 @@ def render_system(system: System, minimum: Point, maximum: Point, title: str, fi
     ax.set_aspect("equal")
     cbar = plt.colorbar(contourf)
     cbar.set_label("Joules per coulomb (Volts)")
-    print("Done, displaying results...\n")
-    text_system(system, minimum, maximum, potential_size=20)
-    plt.show()
-
-
-if __name__ == "__main__":
-    from time import sleep
-    print("This python file is just a library, feel free to try out the other programs.")
-    sleep(5)
+    plt.savefig(f"plots/{plot_id}.png")
