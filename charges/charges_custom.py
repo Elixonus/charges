@@ -30,13 +30,25 @@ def ask_view() -> (Point, Point):
     print(f"The viewport is set to (in meters) (({xmin:.5f}, {ymin:.5f}) - ({xmax:.5f}, {ymax:.5f})).")
     return Point(xmin, ymin), Point(xmax, ymax)
 
+
 def ask_point_charge() -> PointCharge:
     print("Point charge was selected.")
+    c = ask_float("Charge in Coulombs is [?]: ")
     x = ask_float("X in meters is [?]: ")
     y = ask_float("Y in meters is [?]: ")
-    c = ask_float("Charge in Coulombs is [?]: ")
     print(f"The position and charge of the point charge is ({x:.5f}m, {y:.5f}m), {c: .5f}C")
     return PointCharge(c, Point(x, y))
+
+
+def ask_finite_line_charge() -> FiniteLineCharge:
+    print("Finite line charge was selected.")
+    c = ask_float("Charge in Coulombs is [?]: ")
+    x1 = ask_float("X1 in meters is [?]: ")
+    y1 = ask_float("Y1 in meters is [?]: ")
+    x2 = ask_float("X2 in meters is [?]: ")
+    y2 = ask_float("Y2 in meters is [?]: ")
+    print(f"The positions and charge of the finite line charge is \n(({x1:.5f}m, {y1:.5f}m), ({x2:.5f}m, {y2:.5f}m)), {c: .5f}C")
+    return FiniteLineCharge(c, Point(x1, y1), Point(x2, y2), 100)
 
 all_charges = []
 
@@ -72,7 +84,8 @@ while True:
         all_charges.append(charge)
 
     elif letter == "L":
-        print("Finite line charge was selected")
+        charge = ask_finite_line_charge()
+        all_charges.append(charge)
     elif letter == "C":
         print("Circle charge was selected")
     elif letter == "S":
