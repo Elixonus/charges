@@ -131,5 +131,6 @@ class FiniteLineCharge(Charge):
 
 if __name__ == "__main__":
     from time import sleep
-    print("This python file is just a library, feel free to try out the other programs.")
-    sleep(5)
+    print("Running the file: charges_custom.py\n")
+    sleep(2)
+    import charges_custom
