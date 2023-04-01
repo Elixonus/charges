@@ -27,7 +27,9 @@ def ask_view() -> tuple[Point, Point]:
     ymin = ask_float("-> Ymin in meters is [?]: ")
     xmax = ask_float("-> Xmax in meters is [?]: ")
     ymax = ask_float("-> Ymax in meters is [?]: ")
-    print(f"The viewport is set to (in meters) (({xmin:.5f}, {ymin:.5f}) - ({xmax:.5f}, {ymax:.5f})).")
+    print(
+        f"The viewport is set to (in meters) (({xmin:.5f}, {ymin:.5f}) - ({xmax:.5f}, {ymax:.5f}))."
+    )
     return Point(xmin, ymin), Point(xmax, ymax)
 
 
@@ -36,7 +38,9 @@ def ask_point_charge() -> PointCharge:
     c = ask_float("-> Charge in Coulombs is [?]: ")
     x = ask_float("-> X in meters is [?]: ")
     y = ask_float("-> Y in meters is [?]: ")
-    print(f"The position and charge of the point charge is ({x:.5f}m, {y:.5f}m), {c: .5f}C")
+    print(
+        f"The position and charge of the point charge is ({x:.5f}m, {y:.5f}m), {c: .5f}C"
+    )
     return PointCharge(c, Point(x, y))
 
 
@@ -47,7 +51,9 @@ def ask_finite_line_charge() -> FiniteLineCharge:
     y1 = ask_float("-> Y1 in meters is [?]: ")
     x2 = ask_float("-> X2 in meters is [?]: ")
     y2 = ask_float("-> Y2 in meters is [?]: ")
-    print(f"The positions and charge of the finite line charge is \n(({x1:.5f}m, {y1:.5f}m), ({x2:.5f}m, {y2:.5f}m)), {c: .5f}C")
+    print(
+        f"The positions and charge of the finite line charge is \n(({x1:.5f}m, {y1:.5f}m), ({x2:.5f}m, {y2:.5f}m)), {c: .5f}C"
+    )
     return FiniteLineCharge(c, Point(x1, y1), Point(x2, y2), 100)
 
 
@@ -68,7 +74,9 @@ def ask_circle_charge() -> list[PointCharge]:
 
 all_charges: list[Charge] = []
 
-print("This program will show the electric field and potential around the user described set of charges.\n")
+print(
+    "This program will show the electric field and potential around the user described set of charges.\n"
+)
 sleep(3)
 
 minimum, maximum = ask_view()
@@ -108,6 +116,13 @@ except:
     print("Unfortunately, there was an error in the building of the system of charges.")
 else:
     try:
-        render_system(system, minimum=minimum, maximum=maximum, title="Electric field and potential")
+        render_system(
+            system,
+            minimum=minimum,
+            maximum=maximum,
+            title="Electric field and potential",
+        )
     except:
-        print("Unfortunately, there was an error in the displaying of electric field and potential figures.")
+        print(
+            "Unfortunately, there was an error in the displaying of electric field and potential figures."
+        )

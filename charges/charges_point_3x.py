@@ -4,15 +4,17 @@ from points import Point
 from charges import System, PointCharge
 from render import render_system
 
-print("This program will show the electric field and potential around three point charges.")
+print(
+    "This program will show the electric field and potential around three point charges."
+)
 sleep(2)
 print("You can enter the electric charge in Coulombs of each particle.")
 sleep(2)
 print()
 
-charge_1 = 0.
-charge_2 = 0.
-charge_3 = 0.
+charge_1 = 0.0
+charge_2 = 0.0
+charge_3 = 0.0
 
 while True:
     print("Charge of first particle (left)")
@@ -44,8 +46,17 @@ while True:
         continue
     break
 
-system = System([PointCharge(charge=charge_1, point=Point(2, 5)),
-                 PointCharge(charge=charge_2, point=Point(4, 6)),
-                 PointCharge(charge=charge_3, point=Point(8, 5))])
+system = System(
+    [
+        PointCharge(charge=charge_1, point=Point(2, 5)),
+        PointCharge(charge=charge_2, point=Point(4, 6)),
+        PointCharge(charge=charge_3, point=Point(8, 5)),
+    ]
+)
 print()
-render_system(system, minimum=Point(0, 0), maximum=Point(10, 10), title="Electric field and potential around\nthree points charges")
+render_system(
+    system,
+    minimum=Point(0, 0),
+    maximum=Point(10, 10),
+    title="Electric field and potential around\nthree points charges",
+)

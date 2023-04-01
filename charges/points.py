@@ -7,6 +7,7 @@ from collections.abc import Iterator
 
 class Point:
     """Two-dimensional point represented in cartesian coordinates."""
+
     x: float
     y: float
 
@@ -128,5 +129,8 @@ class Point:
 
 if __name__ == "__main__":
     from time import sleep
-    print("This python file is just a library, feel free to try out the other programs.")
+
+    print(
+        "This python file is just a library, feel free to try out the other programs."
+    )
     sleep(5)

@@ -5,9 +5,9 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from points import Point
 
-ELECTROSTATIC_CONSTANT: float = 8.9875517923E+9
+ELECTROSTATIC_CONSTANT: float = 8.9875517923e9
 """Electrostatic constant in Newtons, meters squared per Coulombs squared."""
-ELEMENTARY_CHARGE: float = 1.602176634E-19
+ELEMENTARY_CHARGE: float = 1.602176634e-19
 """Charge of basic unit in Coulombs."""
 PROTON_CHARGE: float = ELEMENTARY_CHARGE
 """Charge of a proton in Coulombs."""
@@ -19,6 +19,7 @@ NEUTRON_CHARGE: float = 0
 
 class System:
     """System of charges."""
+
     charges: list[Charge]
 
     def __init__(self, charges: list[Charge]) -> None:
@@ -40,7 +41,7 @@ class System:
 
     def potential(self, point: Point, /) -> float:
         """Calculate the electric potential at the specified point in the system."""
-        potential = 0.
+        potential = 0.0
         for charge in self.charges:
             potential += charge.potential(point)
         return potential
@@ -54,6 +55,7 @@ class System:
 
 class Charge(ABC):
     """Generic charge object which all charge classes inherit from."""
+
     charge: float
 
     def __init__(self, charge: float) -> None:
@@ -73,6 +75,7 @@ class Charge(ABC):
 
 class PointCharge(Charge):
     """Point charge."""
+
     point: Point
 
     def __init__(self, charge: float, point: Point) -> None:
@@ -84,7 +87,9 @@ class PointCharge(Charge):
     def field(self, point: Point, /) -> Point:
         """Calculate the electric field at the specified point."""
         try:
-            field = (ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 2) * (point - self.point).norm()
+            field = (
+                ELECTROSTATIC_CONSTANT * self.charge / self.point.dist(point) ** 2
+            ) * (point - self.point).norm()
         except ZeroDivisionError:
             field = Point(0, 0)
         return field
@@ -100,11 +105,14 @@ class PointCharge(Charge):
 
 class FiniteLineCharge(Charge):
     """Finite line charge."""
+
     point_charges: list[PointCharge]
     point_1: Point
     point_2: Point
 
-    def __init__(self, charge: float, point_1: Point, point_2: Point, number_point_charges: int) -> None:
+    def __init__(
+        self, charge: float, point_1: Point, point_2: Point, number_point_charges: int
+    ) -> None:
         super().__init__(charge)
         self.charge = charge
         self.point_1 = point_1
@@ -123,7 +131,7 @@ class FiniteLineCharge(Charge):
         return field
 
     def potential(self, point: Point, /) -> float:
-        potential = 0.
+        potential = 0.0
         for point_charge in self.point_charges:
             potential += point_charge.potential(point)
         return potential
@@ -131,6 +139,7 @@ class FiniteLineCharge(Charge):
 
 if __name__ == "__main__":
     from time import sleep
+
     print("Running the file: charges_custom.py\n")
     sleep(2)
     import charges_custom
