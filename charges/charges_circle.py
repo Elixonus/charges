@@ -1,7 +1,7 @@
 from time import sleep
 from math import isnan, cos, sin, tau
 from points import Point
-from charges import System, PointCharge
+from charges import System, Charge, PointCharge
 from render import render_system
 
 print("This program will show the electric field and potential around a uniformly distributed circle of charge.")
@@ -10,7 +10,7 @@ print("You can enter the total electric charge of the circle.")
 sleep(1.5)
 print()
 
-charge = 0
+charge = 0.
 
 while True:
     print("Total charge of circle")
@@ -22,7 +22,7 @@ while True:
         continue
     break
 
-charges = []
+charges: list[Charge] = []
 for n in range(100):
     angle = tau * (n / 100)
     radius = 3

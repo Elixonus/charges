@@ -10,8 +10,8 @@ print("You can enter the total electric charges of each of the segments.")
 sleep(2.5)
 print()
 
-charge_1 = 0
-charge_2 = 0
+charge_1 = 0.
+charge_2 = 0.
 
 while True:
     print("Charge of left rod")

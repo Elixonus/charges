@@ -10,7 +10,7 @@ print("You can enter the total electric charge of the square.")
 sleep(1.5)
 print()
 
-charge = 0
+charge = 0.
 
 while True:
     print("Total charge of square")

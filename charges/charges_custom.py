@@ -1,7 +1,7 @@
 from time import sleep
 from math import isnan, cos, sin, tau
 from points import Point
-from charges import System, PointCharge, FiniteLineCharge
+from charges import System, Charge, PointCharge, FiniteLineCharge
 from render import render_system
 
 
@@ -21,7 +21,7 @@ def ask_float(message: str) -> float:
             return number
 
 
-def ask_view() -> (Point, Point):
+def ask_view() -> tuple[Point, Point]:
     print("Please enter the viewport minimum and maximum values.")
     xmin = ask_float("-> Xmin in meters is [?]: ")
     ymin = ask_float("-> Ymin in meters is [?]: ")
@@ -66,7 +66,7 @@ def ask_circle_charge() -> list[PointCharge]:
     return charges
 
 
-all_charges = []
+all_charges: list[Charge] = []
 
 print("This program will show the electric field and potential around the user described set of charges.\n")
 sleep(3)
@@ -93,17 +93,15 @@ while True:
     # here
     if letter == "N":
         break
-
     elif letter == "P":
-        charge = ask_point_charge()
-        all_charges.append(charge)
-
+        point_charge = ask_point_charge()
+        all_charges.append(point_charge)
     elif letter == "L":
-        charge = ask_finite_line_charge()
-        all_charges.append(charge)
+        finite_line_charge = ask_finite_line_charge()
+        all_charges.append(finite_line_charge)
     elif letter == "C":
-        circle = ask_circle_charge()
-        all_charges += circle
+        circle_charge = ask_circle_charge()
+        all_charges.extend(circle_charge)
 try:
     system = System(all_charges)
 except:

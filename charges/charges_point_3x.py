@@ -10,9 +10,9 @@ print("You can enter the electric charge in Coulombs of each particle.")
 sleep(2)
 print()
 
-charge_1 = 0
-charge_2 = 0
-charge_3 = 0
+charge_1 = 0.
+charge_2 = 0.
+charge_3 = 0.
 
 while True:
     print("Charge of first particle (left)")

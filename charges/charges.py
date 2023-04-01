@@ -40,7 +40,7 @@ class System:
 
     def potential(self, point: Point, /) -> float:
         """Calculate the electric potential at the specified point in the system."""
-        potential = 0
+        potential = 0.
         for charge in self.charges:
             potential += charge.potential(point)
         return potential
@@ -123,7 +123,7 @@ class FiniteLineCharge(Charge):
         return field
 
     def potential(self, point: Point, /) -> float:
-        potential = 0
+        potential = 0.
         for point_charge in self.point_charges:
             potential += point_charge.potential(point)
         return potential

@@ -10,7 +10,7 @@ print("You can enter the total electric charge of the segment.")
 sleep(1)
 print()
 
-charge = 0
+charge = 0.
 
 while True:
     print("Charge of rod")
