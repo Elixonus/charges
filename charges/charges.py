@@ -140,6 +140,25 @@ class FiniteLineCharge(Charge):
 if __name__ == "__main__":
     from time import sleep
 
-    print("Running the file: charges_custom.py\n")
+    print("Running the file: charges_custom.py")
     sleep(2)
     import charges_custom
+else:
+    print(r"""
+               ^     ^                 
+                \   /                  
+                 \ /                   
+           <----- + ----->             
+                 / \                   
+                /   \                  
+               v     v                    
+          __ __     ___  _____      
+     ____/ // /__ _/ _ \/ ___/__ ___
+    / __/ _  / _ `/ , _/ (_ / -_|_-<
+    \__/_//_/\_,_/_/|_|\___/\__/___/
+        
+    Simulates electric potential and
+    field around charges of arbitrary
+    shape using finite discretization
+    methods.
+    """)
