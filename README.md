@@ -1,6 +1,6 @@
 # charges
 
-Simulates electric potential and field around charges of arbitrary shape using finite discretization methods.
+Simulates electric potential and field around charges of arbitrary shape using finite number of point charges.
 
 ## Usage
 
