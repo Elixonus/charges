@@ -1,11 +1,11 @@
 try:
     from math import sqrt
     from random import choice, randint
-    from string import ascii_letters
     from rich.console import Console
     from charges import System
     from points import Point
 
+    letters = "@%*."
     console = Console()
 
 
@@ -62,9 +62,8 @@ try:
                     color = f"rgb({255},{channel},{channel})"
                 else:
                     color = "rgb(255,255,255)"
-                console.print(
-                    choice(ascii_letters) + choice(ascii_letters), style=f"{color}", end=""
-                )
+                letter = letters[min(max(round((len(letters) - 1) * (1 - abs(normal))), 0), len(letters) - 1)]
+                console.print(letter + letter, style=f"{color}", end="")
             for _ in range(2):
                 console.print("#", style="rgb(90,90,90)", end="")
             for _ in range(2):
