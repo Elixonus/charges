@@ -1,4 +1,4 @@
-# charges
+# electricchargevisualizer
 
 Simulates electric potential and field around charges of arbitrary shape using finite number of point charges.
 
